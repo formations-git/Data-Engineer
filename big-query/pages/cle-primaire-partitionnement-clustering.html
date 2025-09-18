@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Concepts clés BigQuery : Clé primaire, partitionnement et clustering</title>
+    <!-- Intégration du style et script Highlight.js avec thème foncé -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #001f3f; /* bleu foncé */
+            color: #cccccc;
+        }
+        h1, h2, h3 {
+            color: #f8f8f2;
+        }
+        pre {
+            background-color: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            overflow-x: auto;
+        }
+        .hljs {
+            background-color: #033466 !important; /* bleu moins foncé */
+            padding: 10px !important;
+            border-radius: 4px !important;
+            font-size: 14px;
+        }
+        code {
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            color: #f8f8f2;
+        }
+        p, li {
+            color: #cccccc;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Concepts clés BigQuery : Clé primaire, partitionnement et clustering</h1>
+
+    <section>
+        <h2>Clé primaire dans BigQuery</h2>
+        <p>Dans BigQuery, il n’y a pas de contrainte de clé primaire comme dans les bases de données relationnelles traditionnelles. Cependant, il est judicieux de définir des colonnes comme « clé primaire logique » pour :</p>
+        <ul>
+            <li>Déduplication (identifier les lignes uniques)</li>
+            <li>Optimisation des jointures</li>
+            <li>Amélioration des performances avec le partitionnement et le clustering</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Partitionnement vs clustering</h2>
+        <p><strong>Partitionnement</strong> divise la table en segments basés sur une colonne spécifique (souvent une date ou un timestamp).</p>
+        <ul>
+            <li>Types de partition : par DATE, DATETIME, TIMESTAMP, entier, ou ingestion time (<code>_PARTITIONTIME</code>)</li>
+            <li>Avantages : réduction drastique des coûts, meilleure performance, maintenance facilitée</li>
+        </ul>
+        <p><strong>Clustering</strong> organise les données à l’intérieur de chaque partition selon les colonnes choisies (jusqu’à 4 colonnes).</p>
+        <ul>
+            <li>L’ordre des colonnes est important (la première colonne a le plus d’impact)</li>
+            <li>Réorganisation automatique en arrière-plan</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Bonnes pratiques</h2>
+
+        <h3>Stratégie de partitionnement</h3>
+        <p>Exemple :</p>
+        <pre><code class="language-sql">CREATE TABLE `project.dataset.sales_data` (
+  transaction_id STRING,
+  customer_id STRING,
+  product_id STRING,
+  transaction_date DATE,
+  amount NUMERIC
+) PARTITION BY transaction_date
+  CLUSTER BY customer_id, product_id;
+        </code></pre>
+        <ul>
+            <li>Utiliser une colonne fréquemment filtrée dans les requêtes</li>
+            <li>Privilégier une colonne de date/timestamp</li>
+            <li>Maximum : 4000 partitions par table</li>
+        </ul>
+
+        <h3>Stratégie de clustering</h3>
+        <ul>
+            <li>Colonnes recommandées : status (faible cardinalité, filtrée), customer_id (moyenne, join), product_category (group by), created_date (tri)</li>
+            <li>La première colonne doit être celle le plus souvent filtrée</li>
+            <li>Colonnes suivantes : join/group by/order by</li>
+            <li>Éviter les colonnes très uniques (ex : IDs générés)</li>
+        </ul>
+
+        <h3>Relation avec la clé primaire</h3>
+        <p>Si la clé primaire logique est composite :</p>
+        <pre><code class="language-sql">CREATE TABLE transactions
+  PARTITION BY DATE(transaction_date)
+  CLUSTER BY customer_id;
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Cas d’usage optimaux</h2>
+        <ul>
+            <li><strong>Partitionnement :</strong> filtrage fréquent par date, suppression de données anciennes, réduction de coûts</li>
+            <li><strong>Clustering :</strong> filtrage/jointure/group by sur plusieurs colonnes</li>
+            <li><strong>Combiner les deux :</strong> tables volumineuses (&gt;1GB), filtrage par date ET autre colonne</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Monitoring et optimisation</h2>
+        <p>Vérifier le partitionnement :</p>
+        <pre><code class="language-sql">SELECT partition_id, total_rows, total_logical_bytes
+FROM `project.dataset.INFORMATION_SCHEMA.PARTITIONS`
+WHERE table_name = 'your_table';
+        </code></pre>
+        <p>Analyser l’impact du clustering :</p>
+        <pre><code class="language-sql">SELECT creation_time, total_bytes_processed, total_slot_ms
+FROM `project.region.INFORMATION_SCHEMA.JOBS_BY_PROJECT`
+WHERE job_type = 'QUERY' AND statement_type = 'SELECT';
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Recommandations finales</h2>
+        <ul>
+            <li>Commencer par le partitionnement sur les colonnes de date</li>
+            <li>Ajouter le clustering sur les colonnes fréquemment filtrées</li>
+            <li>Tester et mesurer l’impact sur les requêtes</li>
+            <li>Éviter le sur-clustering</li>
+            <li>Documenter la stratégie pour l’équipe</li>
+        </ul>
+    </section>
+
+</body>
+</html>
