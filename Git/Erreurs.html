@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Erreur git push — Permission denied (guide de résolution)</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial; background:linear-gradient(180deg,#071126 0%, #071933 100%); color:#e6eef6; margin:0; padding:24px}
+    .container{max-width:960px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px}
+    h1{margin:0;font-size:20px}
+    p.lead{color:var(--muted);margin-top:6px}
+    .card{background:var(--card);border-radius:12px;padding:18px;margin-top:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    pre{background:var(--glass);padding:12px;border-radius:8px;overflow:auto;color:#e6eef6}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{background:linear-gradient(90deg,var(--accent),#0891b2);border:none;color:#022029;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+    .muted{color:var(--muted)}
+    .ok{color:#7ef9b1}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#02202A"/><path d="M6 12h12M6 7h12M6 17h12" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <h1>Erreur <code>git push</code> — Permission denied</h1>
+        <p class="lead">Page d'aide en français : diagnostic et étapes pour résoudre l'erreur "Permission ... denied to username_x" lors d'un <code>git push</code>.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1) Problème résumé</h2>
+      <p>Message d'erreur typique :</p>
+      <pre><code>remote: {"auth_status":"access_denied_to_user","body":"Permission to username/projet.git denied to username_x."}
+fatal: unable to access 'https://github.com/username/projet.git/': The requested URL returned error: 403</code></pre>
+      <p class="muted">Interprétation : le dépôt appartient à <strong>formations-git</strong>, mais l'authentification sur ta machine se fait avec l'utilisateur <strong>username_x</strong> qui n'a pas les droits d'écriture.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) Étape Windows : trouver et supprimer l'identifiant GitHub</h2>
+      <ol>
+        <li>Ouvre le menu <strong>Démarrer</strong> et tape <strong>Gestionnaire d'identification</strong> (Credential Manager).</li>
+        <li>Choisis <strong>Identifiants Windows</strong>.</li>
+        <li>Repère l'entrée liée à <code>github.com</code> ou <code>git:https://github.com</code>.</li>
+        <li>Clique dessus puis <strong>Supprimer</strong>.</li>
+      </ol>
+      <p class="muted">Après suppression, la prochaine commande <code>git push</code> demandera des identifiants.</p>
+    </section>
+
+
+    <section class="card">
+      <h2>3) Faire le push avec le bon compte</h2>
+      <p>Après suppression de l'ancien identifiant, exécute :</p>
+      <pre><code id="cmd2">git push</code></pre>
+      <p class="muted">Quand Git demande les identifiants :</p>
+      <ul>
+        <li><strong>Nom d'utilisateur</strong> : <code>formations-git</code></li>
+        <li><strong>Mot de passe</strong> : <em>colle le PAT</em></li>
+      </ul>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" onclick="copyToClipboard('#cmd2')">Copier <code>git push</code></button>
+        <button class="btn" onclick="setSSH()">Utiliser SSH à la place</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6) Alternative : demander l'accès à <strong>username_x</strong></h2>
+      <p>Si tu ne peux pas accéder au compte <strong>formations-git</strong>, demande au propriétaire du dépôt d'ajouter <strong>username_x</strong> en tant que <em>Collaborator</em> (Write).</p>
+    </section>
+
+    <footer>
+      <p class="muted">Astuce : configure des clés SSH pour éviter de retaper des tokens, ou installe <strong>GitHub CLI (gh)</strong> pour gérer facilement l'authentification.</p>
+    </footer>
+
+    <div style="height:18px"></div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="downloadFile()">Télécharger cette page (HTML)</button>
+      <button class="btn" onclick="openHelp()">Plus d'aide</button>
+    </div>
+  </div>
+
+  <script>
+    function copyToClipboard(selector){
+      const el = document.querySelector(selector);
+      if(!el) return;
+      navigator.clipboard.writeText(el.innerText).then(()=>{
+        alert('Copié dans le presse-papiers');
+      }).catch(()=>{alert('Impossible de copier automatiquement — sélectionne et copie manuellement.')});
+    }
+
+    function setSSH(){
+      const cmd = "git remote set-url origin git@github.com:username/projet.git";
+      navigator.clipboard.writeText(cmd).then(()=>{
+        alert('Commande SSH copiée. Colle-la dans ton terminal pour exécuter.');
+      });
+    }
+
+    function downloadFile(){
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'resolution_git_push_permission.html';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    function openHelp(){
+      window.open('https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token', '_blank');
+    }
+  </script>
+</body>
+</html>
