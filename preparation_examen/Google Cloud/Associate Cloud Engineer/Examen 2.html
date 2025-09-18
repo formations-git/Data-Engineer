@@ -1,0 +1,1568 @@
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Examen 2 - Google Cloud - Associate Cloud Engineer Quiz Bilingue</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f2f4f8;
+            color: #333;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .question {
+            background-color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: background-color 0.4s ease, border 0.4s ease;
+        }
+
+        .section-mauvaise {
+            background-color: #fdecea;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+
+        .grille {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .bloc {
+            background-color: #eef3f7;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .option {
+            display: block;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .bonne-reponse {
+            background-color: #c8e6c9;
+            border-left: 4px solid #2e7d32;
+            transition: background-color 0.4s ease;
+            padding-left: 6px;
+        }
+
+        .mauvaise-reponse {
+            background-color: #f8d7da;
+            border-left: 4px solid #b71c1c;
+            transition: background-color 0.4s ease;
+            padding-left: 6px;
+        }
+
+        .explication {
+            margin-top: 10px;
+            background-color: #d9edf7;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            display: none;
+            white-space: pre-wrap; /* Garde les espaces et sauts si besoin */
+        }
+
+        button {
+            display: block;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px auto;
+        }
+
+        .result {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Animation shake */
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          20% { transform: translateX(-8px); }
+          40% { transform: translateX(8px); }
+          60% { transform: translateX(-8px); }
+          80% { transform: translateX(8px); }
+          100% { transform: translateX(0); }
+        }
+
+        .shake {
+          animation: shake 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Examen 2 - Google Cloud - Associate Cloud Engineer Quiz Bilingue</h2>
+
+<form id="quizForm"></form>
+
+<button type="button" onclick="verifier()">Valider</button>
+
+<div id="resultat" class="result"></div>
+
+<script>
+const questions = [
+    {
+    id: 1,
+    texte_en: `You have a Dockerfile that you need to deploy on Kubernetes Engine. What should you do?`,
+    texte_fr: `Vous avez un Dockerfile que vous devez déployer sur Kubernetes Engine. Que devez-vous faire ?`,
+    reponses: [
+        { 
+            texte_en: `You should create a docker image from the Dockerfile and upload it to Container Registry. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.`,
+            texte_fr: `Vous devez créer une image Docker à partir du Dockerfile et la téléverser dans Container Registry. Créez un fichier YAML de déploiement qui pointe vers cette image. Utilisez kubectl pour créer le déploiement avec ce fichier.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `You should use kubectl app deploy <dockerfilename> command.`,
+            texte_fr: `Vous devez utiliser la commande kubectl app deploy <dockerfilename>.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should use gcloud app deploy <dockerfilename> command.`,
+            texte_fr: `Vous devez utiliser la commande gcloud app deploy <dockerfilename>.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should create a docker image from the Dockerfile and upload it to Cloud Storage. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.`,
+            texte_fr: `Vous devez créer une image Docker à partir du Dockerfile et la téléverser dans Cloud Storage. Créez un fichier YAML de déploiement qui pointe vers cette image. Utilisez kubectl pour créer le déploiement avec ce fichier.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should create a docker image from the Dockerfile and upload it to Container Registry → Correct.  
+	To deploy a Dockerfile on Kubernetes Engine, you need to first build the Docker image from your Dockerfile. After the image is built, you then need to push the Docker image to a Docker registry, such as Google's Container Registry. This is because Kubernetes pulls images from a Docker registry. Once the image is in the Container Registry, you create a Deployment configuration file (YAML file), specifying the Docker image to use for the Deployment. You then use the Kubernetes command-line tool 'kubectl' to create the Deployment based on the configuration file.
+
+You should use kubectl app deploy <dockerfilename> command → Incorrect.  
+	The kubectl app deploy command doesn't exist. The kubectl command-line tool does not include a 'deploy' sub-command for deploying a Dockerfile.
+
+You should use gcloud app deploy <dockerfilename> command → Incorrect.  
+	The gcloud app deploy command is used for deploying applications to Google's App Engine, not to Kubernetes Engine.
+
+You should create a docker image from the Dockerfile and upload it to Cloud Storage → Incorrect.  
+	Google's Cloud Storage is an object storage service for storing and retrieving any amount of data at any time, it's not a Docker registry. Kubernetes Engine would not be able to pull the Docker image from Cloud Storage.
+https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app`,
+
+    explication_fr: `Vous devez créer une image Docker à partir du Dockerfile et la téléverser dans Container Registry → Correct.  
+	Pour déployer un Dockerfile sur Kubernetes Engine, vous devez d'abord construire l'image Docker à partir de votre Dockerfile. Une fois l'image construite, vous devez la pousser vers un registre Docker, tel que le Container Registry de Google. Cela est nécessaire car Kubernetes récupère les images à partir d'un registre Docker. Une fois l'image dans le Container Registry, vous créez un fichier de configuration de déploiement (fichier YAML), spécifiant l'image Docker à utiliser pour le déploiement. Vous utilisez ensuite l'outil en ligne de commande Kubernetes 'kubectl' pour créer le déploiement à partir de ce fichier.
+
+Vous devez utiliser la commande kubectl app deploy <dockerfilename> → Incorrect.  
+	La commande kubectl app deploy n'existe pas. L'outil en ligne de commande kubectl ne possède pas de sous-commande 'deploy' pour déployer un Dockerfile.
+
+Vous devez utiliser la commande gcloud app deploy <dockerfilename> → Incorrect.  
+	La commande gcloud app deploy est utilisée pour déployer des applications sur Google App Engine, pas sur Kubernetes Engine.
+
+Vous devez créer une image Docker à partir du Dockerfile et la téléverser dans Cloud Storage → Incorrect.  
+	Cloud Storage de Google est un service de stockage d'objets pour stocker et récupérer des données, ce n'est pas un registre Docker. Kubernetes Engine ne pourrait pas récupérer l'image Docker depuis Cloud Storage.
+https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app`
+	},
+	{
+    id: 2,
+    texte_en: `There are three projects in your organization, for development, testing and production. Your manager wants to monitor resource utilization (RAM, disk, network, CPU) for all applications in these three projects. What should you do?`,
+    texte_fr: `Il y a trois projets dans votre organisation, pour le développement, les tests et la production. Votre manager souhaite surveiller l'utilisation des ressources (RAM, disque, réseau, CPU) pour toutes les applications de ces trois projets. Que devez-vous faire ?`,
+    reponses: [
+        {
+            texte_en: `You should create a Cloud Monitoring workspace in the production project and add development and testing projects to it.`,
+            texte_fr: `Vous devez créer un espace de travail Cloud Monitoring dans le projet de production et y ajouter les projets de développement et de test.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `In Cloud Monitoring, share charts from development, testing and production projects.`,
+            texte_fr: `Dans Cloud Monitoring, partagez les graphiques des projets de développement, test et production.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should use the default Cloud Monitoring dashboards in all the projects.`,
+            texte_fr: `Vous devez utiliser les tableaux de bord Cloud Monitoring par défaut dans tous les projets.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You cannot combine metrics from different projects.`,
+            texte_fr: `Vous ne pouvez pas combiner les métriques de différents projets.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should create a Cloud Monitoring workspace in the production project and add development and testing projects to it → Correct.  
+	Cloud Monitoring allows you to collect, view, and analyze monitoring data from all your cloud and on-premises resources. It helps you understand your application's performance and the underlying infrastructure. A workspace organizes monitoring data from one or more projects. By creating a workspace in the production project and adding the development and testing projects to it, your manager will be able to monitor resource utilization across all three projects from a single place.
+
+In Cloud Monitoring, share charts from development, testing and production projects → Incorrect.  
+	It suggests sharing individual charts from each project. While it's possible to share charts, this would not provide a single, unified view of all three projects.
+
+You should use the default Cloud Monitoring dashboards in all the projects → Incorrect.  
+	It suggests using the default Cloud Monitoring dashboards in all the projects. Again, this would not provide a single, unified view of all the projects.
+
+You cannot combine metrics from different projects → Incorrect.  
+	You can combine metrics from different projects in Google Cloud by using a Cloud Monitoring workspace.
+https://cloud.google.com/monitoring/docs`,
+
+    explication_fr: `Vous devez créer un espace de travail Cloud Monitoring dans le projet de production et y ajouter les projets de développement et de test → Correct.  
+	Cloud Monitoring vous permet de collecter, visualiser et analyser les données de surveillance de toutes vos ressources cloud et sur site. Il vous aide à comprendre les performances de votre application et l'infrastructure sous-jacente. Un espace de travail organise les données de surveillance de un ou plusieurs projets. En créant un espace de travail dans le projet de production et en y ajoutant les projets de développement et de test, votre manager pourra surveiller l'utilisation des ressources sur les trois projets depuis un seul endroit.
+
+Dans Cloud Monitoring, partagez les graphiques des projets de développement, test et production → Incorrect.  
+	Cela suggère de partager des graphiques individuels pour chaque projet. Bien que cela soit possible, cela ne fournit pas une vue unifiée de tous les trois projets.
+
+Vous devez utiliser les tableaux de bord Cloud Monitoring par défaut dans tous les projets → Incorrect.  
+	Cela suggère d'utiliser les tableaux de bord par défaut dans tous les projets, ce qui ne fournit pas non plus une vue unifiée.
+
+Vous ne pouvez pas combiner les métriques de différents projets → Incorrect.  
+	Vous pouvez combiner les métriques de différents projets dans Google Cloud en utilisant un espace de travail Cloud Monitoring.
+https://cloud.google.com/monitoring/docs`
+	},
+	{
+    id: 3,
+    texte_en: `You run a small startup and want to optimize costs in GCP. You need to research resource consumption charges and provide a summary of your expenses. You want to do it in the most efficient way. What should you do?`,
+    texte_fr: `Vous dirigez une petite startup et souhaitez optimiser les coûts dans GCP. Vous devez analyser les charges liées à la consommation des ressources et fournir un résumé de vos dépenses. Vous voulez le faire de la manière la plus efficace. Que devez-vous faire ?`,
+    reponses: [
+        {
+            texte_en: `You should attach labels to resources to reflect the purpose. Than, export Cloud Billing data into BigQuery, and analyze it with Data Studio.`,
+            texte_fr: `Vous devez attacher des labels aux ressources pour refléter leur usage. Ensuite, exportez les données de facturation Cloud vers BigQuery et analysez-les avec Data Studio.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `You should rename resources to reflect the purpose. Write a Python script to analyze resource consumption.`,
+            texte_fr: `Vous devez renommer les ressources pour refléter leur usage. Écrivez un script Python pour analyser la consommation des ressources.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should assign tags to resources to reflect the purpose. Export Cloud Billing data into BigQuery, and analyze it with Data Studio.`,
+            texte_fr: `Vous devez assigner des tags aux ressources pour refléter leur usage. Exportez les données de facturation Cloud vers BigQuery et analysez-les avec Data Studio.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should create a resource usage analysis script based on the project that the resources belong to. Use the IAM accounts and the service accounts that control the resources in this script.`,
+            texte_fr: `Vous devez créer un script d'analyse de l'utilisation des ressources basé sur le projet auquel les ressources appartiennent. Utilisez les comptes IAM et les comptes de service qui contrôlent ces ressources dans ce script.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should attach labels to resources to reflect the purpose. Than, export Cloud Billing data into BigQuery, and analyze it with Data Studio → Correct.  
+	Labels in GCP can be used to organize and track billing details for specific resources based on their associated purpose, team, cost center, environment, or any other criteria you define. Once labeled, billing data can be exported to BigQuery for analysis. BigQuery is a fully-managed, serverless data warehouse that enables super-fast SQL queries using the processing power of Google's infrastructure. You can then visualize this data using Data Studio to create informative, easy-to-read, and customizable reports and dashboards.
+
+You should rename resources to reflect the purpose. Write a Python script to analyze resource consumption → Incorrect.  
+	Renaming resources won't provide an efficient or scalable way to manage costs and can be error-prone. Plus, writing a custom Python script can be inefficient compared to using built-in GCP services like BigQuery and Data Studio.
+
+You should assign tags to resources to reflect the purpose. Export Cloud Billing data into BigQuery, and analyze it with Data Studio → Incorrect.  
+	Tags are not a valid method of organizing resources in Google Cloud Platform, labels are used instead.
+
+You should create a resource usage analysis script based on the project that the resources belong to. Use the IAM accounts and the service accounts that control the resources in this script → Incorrect.  
+	It would be unnecessarily complex and likely ineffective to create a script based on IAM and service accounts. This approach also wouldn't scale or adapt well as your resource usage and projects evolve.
+https://cloud.google.com/compute/docs/labeling-resources
+https://cloud.google.com/blog/topics/cost-management/use-labels-to-gain-visibility-into-gcp-resource-usage-and-spending`,
+
+    explication_fr: `Vous devez attacher des labels aux ressources pour refléter leur usage. Ensuite, exportez les données de facturation Cloud vers BigQuery et analysez-les avec Data Studio → Correct.  
+	Les labels dans GCP permettent d'organiser et de suivre les détails de facturation pour des ressources spécifiques en fonction de leur usage associé, équipe, centre de coûts, environnement ou tout autre critère défini. Une fois étiquetées, les données de facturation peuvent être exportées vers BigQuery pour analyse. BigQuery est un entrepôt de données sans serveur entièrement géré qui permet des requêtes SQL très rapides en utilisant la puissance de traitement de l'infrastructure Google. Vous pouvez ensuite visualiser ces données avec Data Studio pour créer des rapports et tableaux de bord informatifs, lisibles et personnalisables.
+
+Vous devez renommer les ressources pour refléter leur usage. Écrivez un script Python pour analyser la consommation des ressources → Incorrect.  
+	Renommer les ressources ne fournit pas une méthode efficace ou évolutive pour gérer les coûts et peut être source d'erreurs. De plus, écrire un script Python personnalisé peut être inefficace comparé aux services intégrés de GCP comme BigQuery et Data Studio.
+
+Vous devez assigner des tags aux ressources pour refléter leur usage. Exportez les données de facturation Cloud vers BigQuery et analysez-les avec Data Studio → Incorrect.  
+	Les tags ne sont pas une méthode valide d'organisation des ressources dans Google Cloud Platform, ce sont les labels qui sont utilisés.
+
+Vous devez créer un script d'analyse de l'utilisation des ressources basé sur le projet auquel les ressources appartiennent. Utilisez les comptes IAM et les comptes de service qui contrôlent ces ressources dans ce script → Incorrect.  
+	Ce serait inutilement complexe et probablement inefficace de créer un script basé sur IAM et les comptes de service. Cette approche ne serait pas évolutive ni adaptable à mesure que votre utilisation des ressources et vos projets évoluent.
+https://cloud.google.com/compute/docs/labeling-resources
+https://cloud.google.com/blog/topics/cost-management/use-labels-to-gain-visibility-into-gcp-resource-usage-and-spending`
+	},
+	{
+    id: 4,
+    texte_en: `Your company stores Personally Identifiable Information (PII) of customers in a multi-regional Cloud Storage bucket. Your compliance department has asked you to record all operations/requests on this bucket. What should you do?`,
+    texte_fr: `Votre entreprise stocke des informations personnelles identifiables (PII) de clients dans un bucket Cloud Storage multi-régional. Votre service conformité vous a demandé d’enregistrer toutes les opérations/demandes sur ce bucket. Que devez-vous faire ?`,
+    reponses: [
+        {
+            texte_en: `You should turn on data access audit logging in Cloud Storage to record this information.`,
+            texte_fr: `Vous devez activer la journalisation des accès aux données dans Cloud Storage pour enregistrer ces informations.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `You should use the Identity-Aware Proxy API to record this information.`,
+            texte_fr: `Vous devez utiliser l'API Identity-Aware Proxy pour enregistrer ces informations.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should use the Data Loss Prevention API to record this information.`,
+            texte_fr: `Vous devez utiliser l'API Data Loss Prevention pour enregistrer ces informations.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should enable the default Cloud Storage service account exclusive access to read all operations and record them.`,
+            texte_fr: `Vous devez activer l'accès exclusif du compte de service Cloud Storage par défaut pour lire toutes les opérations et les enregistrer.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should turn on data access audit logging in Cloud Storage to record this information → Correct.  
+	It specifically addresses the requirement to log all operations or requests made to a Google Cloud Storage bucket. Google Cloud's audit logs capture administrative activities (like creating, updating, or deleting resources) as well as data access activities (like reading a database or writing to a bucket). By turning on data access audit logging for your Cloud Storage bucket, you can record all access to the data in the bucket, which will include any operations or requests made.
+
+You should use the Identity-Aware Proxy API to record this information → Incorrect.  
+	The Identity-Aware Proxy (IAP) API is used to manage access to applications running in Google Cloud, not to record operations or requests on a Cloud Storage bucket.
+
+You should use the Data Loss Prevention API to record this information → Incorrect.  
+	The Data Loss Prevention (DLP) API is used to discover, classify, and redact sensitive data. It doesn't provide logging of all operations on a Cloud Storage bucket.
+
+You should enable the default Cloud Storage service account exclusive access to read all operations and record them → Incorrect.  
+	The default Cloud Storage service account doesn't have the capability to record all operations and requests.
+https://cloud.google.com/logging/docs/audit`,
+
+    explication_fr: `Vous devez activer la journalisation des accès aux données dans Cloud Storage pour enregistrer ces informations → Correct.  
+	Cela répond précisément à la nécessité d'enregistrer toutes les opérations ou requêtes effectuées sur un bucket Google Cloud Storage. Les journaux d'audit Google Cloud capturent les activités administratives (création, mise à jour, suppression de ressources) ainsi que les activités d'accès aux données (lecture d'une base ou écriture dans un bucket). En activant la journalisation des accès aux données pour votre bucket Cloud Storage, vous pouvez enregistrer tous les accès aux données du bucket, y compris toutes les opérations ou requêtes effectuées.
+
+Vous devez utiliser l'API Identity-Aware Proxy pour enregistrer ces informations → Incorrect.  
+	L'API Identity-Aware Proxy (IAP) sert à gérer l'accès aux applications fonctionnant dans Google Cloud, pas à enregistrer les opérations sur un bucket Cloud Storage.
+
+Vous devez utiliser l'API Data Loss Prevention pour enregistrer ces informations → Incorrect.  
+	L'API Data Loss Prevention (DLP) sert à découvrir, classer et masquer les données sensibles. Elle ne fournit pas la journalisation des opérations sur un bucket Cloud Storage.
+
+Vous devez activer l'accès exclusif du compte de service Cloud Storage par défaut pour lire toutes les opérations et les enregistrer → Incorrect.  
+	Le compte de service Cloud Storage par défaut n'a pas la capacité d'enregistrer toutes les opérations et requêtes.
+https://cloud.google.com/logging/docs/audit`
+	},
+	{
+    id: 5,
+    texte_en: `A web application is running using a Managed Instance Group based on an instance template. You modified the startup script in this template and want to propagate these changes to all instances in this MIG. What should you do to minimize effort and cost while maintaining available capacity?`,
+    texte_fr: `Une application web fonctionne avec un Managed Instance Group basé sur un modèle d'instance. Vous avez modifié le script de démarrage dans ce modèle et souhaitez propager ces changements à toutes les instances du MIG. Que devez-vous faire pour minimiser l'effort et le coût tout en maintenant la capacité disponible ?`,
+    reponses: [
+        {
+            texte_en: `You should perform a rolling-action replace with max-unavailable set to 0 and max-surge set to 1.`,
+            texte_fr: `Vous devez effectuer une action de remplacement en rolling avec max-unavailable à 0 et max-surge à 1.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `You should perform a rolling-action start-update with max-unavailable set to 1 and max-surge set to 0.`,
+            texte_fr: `Vous devez effectuer une mise à jour en rolling-action start-update avec max-unavailable à 1 et max-surge à 0.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should remove instances in the managed instance group (MIG) one at a time and rely on auto-healing to provision an additional instance.`,
+            texte_fr: `Vous devez supprimer les instances du groupe géré (MIG) une par une et compter sur l'auto-guérison pour provisionner une instance supplémentaire.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should create a new managed instance group based on a new template. Add the group as a backend service for the load balancer. When all instances in the new managed instance group are healthy, remove the old managed instance group.`,
+            texte_fr: `Vous devez créer un nouveau groupe géré basé sur un nouveau modèle. Ajoutez ce groupe en tant que backend du load balancer. Quand toutes les instances du nouveau groupe sont saines, supprimez l'ancien groupe.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should perform a rolling-action replace with max-unavailable set to 0 and max-surge set to 1 → Correct.  
+	It allows for the update of the Managed Instance Group (MIG) while ensuring that there is no reduction in the available capacity. In a rolling update, Google Cloud replaces instances gradually. The max-unavailable setting determines the maximum number of instances that can be taken offline during the update. By setting it to 0, you ensure that all instances remain online during the update. The max-surge setting determines the number of additional instances that can be created during the update. By setting it to 1, you allow one additional instance to be created, effectively replacing one existing instance at a time.
+
+You should perform a rolling-action start-update with max-unavailable set to 1 and max-surge set to 0 → Incorrect.  
+	This will take one instance offline at a time without creating additional instances, potentially reducing the available capacity.
+
+You should remove instances in the managed instance group (MIG) one at a time and rely on auto-healing to provision an additional instance → Incorrect.  
+	This method can be labor-intensive and can potentially reduce the available capacity.
+
+You should create a new managed instance group based on a new template. Add the group as a backend service for the load balancer. When all instances in the new managed instance group are healthy, remove the old managed instance group → Incorrect.  
+	This method is unnecessarily complex and could lead to increased costs due to the creation of an entirely new MIG.
+https://cloud.google.com/sdk/gcloud/reference/compute/instance-groups/managed/rolling-action`,
+
+    explication_fr: `Vous devez effectuer une action de remplacement en rolling avec max-unavailable à 0 et max-surge à 1 → Correct.  
+	Cela permet de mettre à jour le Managed Instance Group (MIG) tout en garantissant qu'il n'y a pas de réduction de la capacité disponible. Lors d'une mise à jour progressive, Google Cloud remplace les instances progressivement. Le paramètre max-unavailable détermine le nombre maximal d'instances pouvant être arrêtées pendant la mise à jour. En le réglant à 0, vous assurez que toutes les instances restent en ligne pendant la mise à jour. Le paramètre max-surge détermine le nombre d'instances supplémentaires pouvant être créées durant la mise à jour. En le réglant à 1, vous permettez la création d'une instance supplémentaire, remplaçant ainsi une instance existante à la fois.
+
+Vous devez effectuer une mise à jour en rolling-action start-update avec max-unavailable à 1 et max-surge à 0 → Incorrect.  
+	Cela mettra une instance hors ligne à la fois sans créer d'instances supplémentaires, ce qui peut réduire la capacité disponible.
+
+Vous devez supprimer les instances du groupe géré (MIG) une par une et compter sur l'auto-guérison pour provisionner une instance supplémentaire → Incorrect.  
+	Cette méthode peut être laborieuse et peut réduire la capacité disponible.
+
+Vous devez créer un nouveau groupe géré basé sur un nouveau modèle. Ajoutez ce groupe en tant que backend du load balancer. Quand toutes les instances du nouveau groupe sont saines, supprimez l'ancien groupe → Incorrect.  
+	Cette méthode est inutilement complexe et pourrait entraîner des coûts accrus dus à la création d'un nouveau MIG complet.
+https://cloud.google.com/sdk/gcloud/reference/compute/instance-groups/managed/rolling-action`
+	},
+	{
+    id: 6,
+    texte_en: `As a Cloud Engineer, you need to design an IoT application that requires data storage up to 30 petabytes. Your application must support fast reads and writes. Your data schema is rather simple and you want to use the most economical solution for this. What should you do?`,
+    texte_fr: `En tant qu'ingénieur cloud, vous devez concevoir une application IoT nécessitant le stockage de données jusqu'à 30 pétaoctets. Votre application doit prendre en charge des lectures et écritures rapides. Votre schéma de données est relativement simple et vous souhaitez utiliser la solution la plus économique. Que devez-vous faire ?`,
+    reponses: [
+        { texte_en: `You should store the data in Cloud Bigtable.`, 
+          texte_fr: `Vous devez stocker les données dans Cloud Bigtable.`, valeur: "correcte" },
+        { texte_en: `You should use BigQuery, and implement the business logic in SQL.`, 
+          texte_fr: `Vous devez utiliser BigQuery et implémenter la logique métier en SQL.`, valeur: "mauvaise" },
+        { texte_en: `You should store the data in Cloud Storage.`, 
+          texte_fr: `Vous devez stocker les données dans Cloud Storage.`, valeur: "mauvaise" },
+        { texte_en: `You should store the data in Cloud Spanner, and add an in-memory cache for speed.`, 
+          texte_fr: `Vous devez stocker les données dans Cloud Spanner et ajouter un cache en mémoire pour la rapidité.`, valeur: "mauvaise" }
+    ],
+    explication_en: `You should store the data in Cloud Bigtable. → Correct.  
+	Cloud Bigtable is designed to handle massive workloads at consistent low latency and high throughput, making it ideal for running high-performance databases and analytical applications, and it would be the most economical solution for the described use case. Cloud Bigtable is Google Cloud's NoSQL Big Data database service. It's meant for use cases where low latency reads and high throughput writes, scalability, and reliability are critical.
+
+You should use BigQuery, and implement the business logic in SQL. → Incorrect.  
+	BigQuery is a data warehouse solution meant for running interactive SQL queries on large datasets. While it could technically handle the data volume, it is not optimized for fast read/write operations and can be more expensive for this use case.
+
+You should store the data in Cloud Storage. → Incorrect.  
+	Cloud Storage is an object storage service and would not be ideal for applications requiring fast reads and writes.
+
+You should store the data in Cloud Spanner, and add an in-memory cache for speed. → Incorrect.  
+	Cloud Spanner is a fully managed relational database service. While it provides high performance, it's not the most economical solution for storing simple schema data at petabyte scale. Additionally, adding an in-memory cache could increase complexity and cost.
+https://cloud.google.com/bigtable/docs`,
+    
+    explication_fr: `Vous devez stocker les données dans Cloud Bigtable. → Correct.  
+	Cloud Bigtable est conçu pour gérer des charges de travail massives avec une latence faible et un débit élevé constants, ce qui en fait la solution idéale pour exécuter des bases de données et des applications analytiques haute performance, et ce serait la solution la plus économique dans ce cas d'usage. Cloud Bigtable est le service NoSQL Big Data de Google Cloud. Il est destiné aux cas où les lectures à faible latence, les écritures à haut débit, la scalabilité et la fiabilité sont essentielles.
+
+Vous devez utiliser BigQuery et implémenter la logique métier en SQL. → Incorrect.  
+	BigQuery est une solution d'entrepôt de données conçue pour exécuter des requêtes SQL interactives sur de grands ensembles de données. Bien qu'il puisse techniquement gérer le volume de données, il n'est pas optimisé pour des opérations de lecture/écriture rapides et peut être plus coûteux dans ce cas.
+
+Vous devez stocker les données dans Cloud Storage. → Incorrect.  
+	Cloud Storage est un service de stockage d'objets et ne serait pas idéal pour les applications nécessitant des lectures et écritures rapides.
+
+Vous devez stocker les données dans Cloud Spanner et ajouter un cache en mémoire pour la rapidité. → Incorrect.  
+	Cloud Spanner est un service de base de données relationnelle entièrement géré. Bien qu'il offre de hautes performances, ce n'est pas la solution la plus économique pour stocker des données à schéma simple à l'échelle pétaoctet. De plus, l'ajout d'un cache en mémoire augmenterait la complexité et les coûts.
+https://cloud.google.com/bigtable/docs`
+	},
+	{
+    id: 7,
+    texte_en: `What is the purpose of a load balancer in a cloud infrastructure?`,
+    texte_fr: `Quel est le rôle d'un répartiteur de charge (load balancer) dans une infrastructure cloud ?`,
+    reponses: [
+        { texte_en: `To distribute network traffic across multiple servers to ensure high availability and scalability.`, 
+          texte_fr: `Distribuer le trafic réseau entre plusieurs serveurs pour assurer une haute disponibilité et la scalabilité.`, valeur: "correcte" },
+        { texte_en: `To optimize and compress data traffic between the client and the server.`, 
+          texte_fr: `Optimiser et compresser le trafic de données entre le client et le serveur.`, valeur: "mauvaise" },
+        { texte_en: `To encrypt data at rest and in transit, ensuring data security.`, 
+          texte_fr: `Chiffrer les données au repos et en transit pour assurer la sécurité des données.`, valeur: "mauvaise" },
+        { texte_en: `To monitor and analyze the performance of cloud applications and services.`, 
+          texte_fr: `Surveiller et analyser les performances des applications et services cloud.`, valeur: "mauvaise" }
+    ],
+    explication_en: `To distribute network traffic across multiple servers to ensure high availability and scalability. → Correct.  
+	The main purpose of a load balancer in a cloud infrastructure is to distribute network traffic across multiple servers. By evenly distributing the traffic load, a load balancer ensures high availability and scalability of applications or services. It helps prevent overloading of individual servers and provides fault tolerance.
+
+To optimize and compress data traffic between the client and the server. → Incorrect.  
+	Optimizing and compressing data traffic between the client and the server is not the primary purpose of a load balancer. While load balancers may perform some traffic optimization techniques, their main role is not data compression.
+
+To encrypt data at rest and in transit, ensuring data security. → Incorrect.  
+	Encrypting data at rest and in transit is not a direct responsibility of a load balancer. Data encryption is typically handled by other security mechanisms such as encryption protocols, SSL/TLS certificates, or encryption services.
+
+To monitor and analyze the performance of cloud applications and services. → Incorrect.  
+	Monitoring and analyzing the performance of cloud applications and services are tasks typically performed by monitoring tools or services specific to performance monitoring, rather than load balancers.`,
+    
+    explication_fr: `Distribuer le trafic réseau entre plusieurs serveurs pour assurer une haute disponibilité et la scalabilité. → Correct.  
+	Le rôle principal d'un répartiteur de charge dans une infrastructure cloud est de répartir le trafic réseau entre plusieurs serveurs. En répartissant équitablement la charge, le load balancer garantit la haute disponibilité et la scalabilité des applications ou services. Il aide à éviter la surcharge des serveurs individuels et offre une tolérance aux pannes.
+
+Optimiser et compresser le trafic de données entre le client et le serveur. → Incorrect.  
+	L'optimisation et la compression du trafic ne sont pas le rôle principal d'un répartiteur de charge. Bien que certains load balancers puissent appliquer des optimisations, leur rôle principal n'est pas la compression.
+
+Chiffrer les données au repos et en transit pour assurer la sécurité des données. → Incorrect.  
+	Le chiffrement des données au repos et en transit n'est pas directement la responsabilité d'un répartiteur de charge. Cela relève généralement d'autres mécanismes de sécurité comme les protocoles de chiffrement, les certificats SSL/TLS ou les services de chiffrement.
+
+Surveiller et analyser les performances des applications et services cloud. → Incorrect.  
+	La surveillance et l'analyse des performances sont généralement assurées par des outils ou services dédiés à la supervision, et non par le load balancer lui-même.`
+	},
+	{
+    id: 8,
+    texte_en: `You need to create a Kubernetes Engine cluster to deploy multiple pods and use BigQuery to store all container logs for later analysis. What solution should you apply to follow Google's best practices?`,
+    texte_fr: `Vous devez créer un cluster Kubernetes Engine pour déployer plusieurs pods et utiliser BigQuery pour stocker tous les journaux des conteneurs pour une analyse ultérieure. Quelle solution devez-vous appliquer pour suivre les bonnes pratiques de Google ?`,
+    reponses: [
+        { texte_en: `Enable Cloud Logging when creating a Kubernetes Engine cluster.`, 
+          texte_fr: `Activer Cloud Logging lors de la création d'un cluster Kubernetes Engine.`, valeur: "correcte" },
+        { texte_en: `Enable Cloud Monitoring when creating a Kubernetes Engine cluster.`, 
+          texte_fr: `Activer Cloud Monitoring lors de la création d'un cluster Kubernetes Engine.`, valeur: "mauvaise" },
+        { texte_en: `You should use the Cloud Logging export feature to create a sink to Cloud Storage, than create a Cloud Dataflow job that imports log files from Cloud Storage to BigQuery.`, 
+          texte_fr: `Vous devez utiliser la fonction d'exportation Cloud Logging pour créer une cible vers Cloud Storage, puis créer un job Cloud Dataflow qui importe les fichiers journaux de Cloud Storage vers BigQuery.`, valeur: "mauvaise" },
+        { texte_en: `The only solution is to develop a custom add-on that uses the Cloud Logging API and BigQuery API.`, 
+          texte_fr: `La seule solution consiste à développer un module complémentaire personnalisé utilisant l'API Cloud Logging et l'API BigQuery.`, valeur: "mauvaise" }
+    ],
+    explication_en: `Enable Cloud Logging when creating a Kubernetes Engine cluster. → Correct.  
+	It's the most direct and efficient way to handle logs in a Google Kubernetes Engine (GKE) cluster following Google Cloud's best practices. When you enable Cloud Logging on your GKE cluster, it automatically collects and stores logs from your applications running in pods, as well as system components. Cloud Logging is integrated with GKE and it allows you to analyze and filter the logs for better insight into your system. Furthermore, you can easily export these logs from Cloud Logging to BigQuery for more in-depth analysis.
+
+Enable Cloud Monitoring when creating a Kubernetes Engine cluster. → Incorrect.  
+	Enabling Cloud Monitoring is useful for performance metrics and alerting, but does not directly handle logs, which are the focus of the question.
+
+You should use the Cloud Logging export feature to create a sink to Cloud Storage, than create a Cloud Dataflow job that imports log files from Cloud Storage to BigQuery. → Incorrect.  
+	It suggests using Cloud Storage as an intermediate step, which adds complexity and delay. It's more efficient to export logs directly from Cloud Logging to BigQuery.
+
+The only solution is to develop a custom add-on that uses the Cloud Logging API and BigQuery API. → Incorrect.  
+	Creating a custom add-on would require significant development effort and might not be as reliable or efficient as using the built-in logging capabilities of GKE and the direct export functionality of Cloud Logging.`,
+    
+    explication_fr: `Activer Cloud Logging lors de la création d'un cluster Kubernetes Engine. → Correct.  
+	C'est la méthode la plus directe et efficace pour gérer les journaux dans un cluster GKE en suivant les bonnes pratiques de Google Cloud. L'activation de Cloud Logging permet de collecter et stocker automatiquement les journaux des applications exécutées dans les pods ainsi que des composants système. Cloud Logging est intégré à GKE et permet d'analyser et filtrer facilement les journaux. Vous pouvez ensuite les exporter directement vers BigQuery pour des analyses approfondies.
+
+Activer Cloud Monitoring lors de la création d'un cluster Kubernetes Engine. → Incorrect.  
+	Cloud Monitoring est utile pour les métriques de performance et les alertes, mais il ne gère pas directement les journaux, qui sont au cœur de la question.
+
+Vous devez utiliser la fonction d'exportation Cloud Logging pour créer une cible vers Cloud Storage, puis créer un job Cloud Dataflow qui importe les fichiers journaux de Cloud Storage vers BigQuery. → Incorrect.  
+	Cela ajoute une étape intermédiaire inutile via Cloud Storage, ce qui complique et ralentit le processus. Il est plus efficace d'exporter directement les journaux de Cloud Logging vers BigQuery.
+
+La seule solution consiste à développer un module complémentaire personnalisé utilisant l'API Cloud Logging et l'API BigQuery. → Incorrect.  
+	Développer un module personnalisé demanderait beaucoup d'efforts de développement et serait moins fiable et efficace que les fonctionnalités intégrées existantes.`  
+	},
+	{
+    id: 9,
+    texte_en: `You are working on your own project and want to control your expenses. You want to be automatically informed about project expenses so that you can take action when you get close to your limit. What should you do?`,
+    texte_fr: `Vous travaillez sur votre propre projet et souhaitez contrôler vos dépenses. Vous voulez être automatiquement informé des dépenses du projet afin de pouvoir agir lorsque vous approchez de votre limite. Que devez-vous faire ?`,
+    reponses: [
+        {
+            texte_en: `Create a budget alert for the appropriate levels for your total monthly budget (for example: 50%, 90%, 100%).`,
+            texte_fr: `Créer une alerte budgétaire pour les niveaux appropriés de votre budget mensuel total (par exemple : 50 %, 90 %, 100 %).`,
+            valeur: `correcte`
+        },
+        {
+            texte_en: `Set up a credit card with a monthly limit equal to your budget.`,
+            texte_fr: `Configurer une carte de crédit avec une limite mensuelle égale à votre budget.`,
+            valeur: `mauvaise`
+        },
+        {
+            texte_en: `You can't automatically control your Google Cloud expenses.`,
+            texte_fr: `Vous ne pouvez pas contrôler automatiquement vos dépenses Google Cloud.`,
+            valeur: `mauvaise`
+        },
+        {
+            texte_en: `Set up a PayPal account with a monthly limit equal to your budget.`,
+            texte_fr: `Configurer un compte PayPal avec une limite mensuelle égale à votre budget.`,
+            valeur: `mauvaise`
+        }
+    ],
+    explication_en: `Create a budget alert for the appropriate levels for your total monthly budget (for example: 50%, 90%, 100%). → Correct.
+	A budget alert enables you to track your actual Google Cloud spend against your planned spend. After you've set a budget amount, you set budget alert threshold rules that are used to trigger email notifications. Budget alert emails help you stay informed about how your spend is tracking against your budget. You can also use budgets to automate cost control responses.`,
+    
+	explication_fr: `Créer une alerte budgétaire pour les niveaux appropriés de votre budget mensuel total (par exemple : 50 %, 90 %, 100 %) → Correct.
+	Une alerte budgétaire vous permet de suivre vos dépenses Google Cloud réelles par rapport à vos dépenses planifiées. Après avoir défini un montant de budget, vous configurez des règles de seuil d'alerte budgétaire qui déclenchent des notifications par email. Ces alertes vous aident à rester informé de la progression de vos dépenses par rapport à votre budget. Vous pouvez également utiliser les budgets pour automatiser des réponses de contrôle des coûts.`
+	},
+	{
+    id: 10,
+    texte_en: `Which service in Google Cloud Platform (GCP) can be used to create and manage virtual networks for securely connecting resources within GCP and extending on-premises networks to the cloud?`,
+    texte_fr: `Quel service de Google Cloud Platform (GCP) peut être utilisé pour créer et gérer des réseaux virtuels afin de connecter en toute sécurité des ressources au sein de GCP et d'étendre les réseaux sur site vers le cloud ?`,
+    reponses: [
+        { texte_en: `Cloud VPN`, 
+          texte_fr: `Cloud VPN`, valeur: "correcte" },
+        { texte_en: `Cloud Pub/Sub`, 
+          texte_fr: `Cloud Pub/Sub`, valeur: "mauvaise" },
+        { texte_en: `Cloud Functions`, 
+          texte_fr: `Cloud Functions`, valeur: "mauvaise" },
+        { texte_en: `Cloud Storage`, 
+          texte_fr: `Cloud Storage`, valeur: "mauvaise" },
+    ],
+    explication_en: `Cloud VPN → Correct.  
+	Cloud VPN is a service that allows secure connectivity between virtual networks within GCP and on-premises networks. It establishes encrypted IPsec tunnels over the public internet to ensure data privacy and integrity.
+
+Cloud Pub/Sub → Incorrect.  
+	Cloud Pub/Sub is a messaging service for asynchronous communication between components of an application. It is not directly related to creating and managing virtual networks.
+
+Cloud Functions → Incorrect.  
+	Cloud Functions is a serverless compute platform for running event-driven functions. It is not specifically designed for creating and managing virtual networks.
+
+Cloud Storage → Incorrect.  
+	Cloud Storage is a scalable object storage service for storing and retrieving data. It is not directly related to creating and managing virtual networks or extending on-premises networks.`,
+    
+    explication_fr: `Cloud VPN → Correct.  
+	Cloud VPN est un service qui permet une connectivité sécurisée entre des réseaux virtuels au sein de GCP et des réseaux sur site. Il établit des tunnels IPsec chiffrés via Internet pour garantir la confidentialité et l'intégrité des données.
+
+Cloud Pub/Sub → Incorrect.  
+	Cloud Pub/Sub est un service de messagerie pour la communication asynchrone entre les composants d'une application. Il n'est pas destiné à la création et à la gestion de réseaux virtuels.
+
+Cloud Functions → Incorrect.  
+	Cloud Functions est une plateforme serverless permettant d'exécuter des fonctions en réponse à des événements. Elle n'est pas conçue spécifiquement pour la création et la gestion de réseaux virtuels.
+
+Cloud Storage → Incorrect.  
+	Cloud Storage est un service de stockage d'objets évolutif pour le stockage et la récupération de données. Il n'est pas destiné à la gestion de réseaux virtuels ni à l'extension de réseaux sur site.`
+	},
+	{
+    id: 11,
+    texte_en: `What are the benefits of using Cloud Storage for storing and managing data in a cloud environment? Choose the most accurate answer from the options below`,
+    texte_fr: `Quels sont les avantages d'utiliser Cloud Storage pour stocker et gérer des données dans un environnement cloud ? Choisissez la réponse la plus précise parmi les options ci-dessous`,
+    reponses: [
+        { texte_en: `Automatic data replication, high durability, and low-cost storage.`, 
+          texte_fr: `Réplication automatique des données, haute durabilité et stockage à faible coût.`, valeur: "correcte" },
+        { texte_en: `Real-time data analytics, serverless compute capabilities, and seamless data integration.`, 
+          texte_fr: `Analytique de données en temps réel, capacités de calcul sans serveur et intégration transparente des données.`, valeur: "mauvaise" },
+        { texte_en: `NoSQL document database, high availability, and strong data consistency.`, 
+          texte_fr: `Base de données documentaire NoSQL, haute disponibilité et forte cohérence des données.`, valeur: "mauvaise" },
+        { texte_en: `Message queuing, event-driven processing, and transactional data processing.`, 
+          texte_fr: `Mise en file de messages, traitement événementiel et traitement transactionnel des données.`, valeur: "mauvaise" },
+    ],
+    explication_en: `Automatic data replication, high durability, and low-cost storage. → Correct.  
+	Cloud Storage automatically replicates data across multiple locations, providing redundancy and high durability. It offers cost-effective storage options suitable for various use cases.
+
+Real-time data analytics, serverless compute capabilities, and seamless data integration. → Incorrect.  
+	While Cloud Storage can be used as a data source for analytics and integrated with other services, the question specifically asks about the benefits of using Cloud Storage itself, and these options refer to other services and capabilities.
+
+NoSQL document database, high availability, and strong data consistency. → Incorrect.  
+	Cloud Storage is not a NoSQL database. It provides high availability and durability for storing and managing data, but it does not enforce strong data consistency guarantees.
+
+Message queuing, event-driven processing, and transactional data processing. → Incorrect.  
+	Cloud Storage does not provide native message queuing or event-driven processing capabilities. It focuses on storage and management of data rather than transactional processing.`,
+
+	explication_fr: `Réplication automatique des données, haute durabilité et stockage à faible coût. → Correct.  
+	Cloud Storage réplique automatiquement les données sur plusieurs emplacements, assurant redondance et haute durabilité. Il propose des options de stockage économiques adaptées à divers cas d'usage.
+
+Analytique de données en temps réel, capacités de calcul sans serveur et intégration transparente des données. → Incorrect.  
+	Bien que Cloud Storage puisse être utilisé comme source de données pour l'analyse et intégré à d'autres services, la question porte spécifiquement sur les avantages d'utiliser Cloud Storage lui-même, et ces options concernent d'autres services et capacités.
+
+Base de données documentaire NoSQL, haute disponibilité et forte cohérence des données. → Incorrect.  
+	Cloud Storage n'est pas une base de données NoSQL. Il offre une haute disponibilité et durabilité pour le stockage et la gestion des données, mais ne garantit pas une forte cohérence des données.
+
+Mise en file de messages, traitement événementiel et traitement transactionnel des données. → Incorrect.  
+	Cloud Storage ne fournit pas de mise en file de messages native ni de traitement événementiel. Il se concentre sur le stockage et la gestion des données plutôt que sur le traitement transactionnel.`
+	},
+	{
+    id: 12,
+    texte_en: `When optimizing a cloud solution for cost efficiency, which strategy should be considered to minimize costs while maintaining high availability?`,
+    texte_fr: `Lors de l'optimisation d'une solution cloud pour l'efficacité des coûts, quelle stratégie doit être envisagée pour minimiser les coûts tout en maintenant une haute disponibilité ?`,
+    reponses: [
+        { texte_en: `Autoscaling based on demand`, 
+          texte_fr: `Autoscaling basé sur la demande`, valeur: "correcte" },
+        { texte_en: `Reserved Instances`, 
+          texte_fr: `Instances réservées`, valeur: "mauvaise" },
+        { texte_en: `Preemptible VMs`, 
+          texte_fr: `Machines virtuelles préemptibles`, valeur: "mauvaise" },
+        { texte_en: `Spot Instances`, 
+          texte_fr: `Instances Spot`, valeur: "mauvaise" },
+    ],
+    explication_en: `Autoscaling based on demand → Correct.  
+	Autoscaling automatically adjusts the number of instances based on the current demand. It allows you to scale up during peak usage periods and scale down during periods of low demand, ensuring high availability while minimizing costs by using resources efficiently.
+
+Reserved Instances → Incorrect.  
+	Reserved Instances allow you to reserve capacity in advance and receive a discount on the hourly rate. While they can provide cost savings, they are not directly related to maintaining high availability. Reserved Instances are better suited for steady-state workloads with predictable usage patterns.
+
+Preemptible VMs → Incorrect.  
+	Preemptible VMs are short-lived instances that can be terminated at any time by Google Cloud. They offer significant cost savings but are not suitable for maintaining high availability since they can be interrupted with short notice.
+
+Spot Instances → Incorrect.  
+	Spot Instances are spare compute capacity offered at significantly reduced prices. While they can provide cost savings, they are not recommended for maintaining high availability as they can be interrupted with short notice when demand increases.`,
+
+	explication_fr: `Autoscaling basé sur la demande → Correct.  
+	L'autoscaling ajuste automatiquement le nombre d'instances en fonction de la demande actuelle. Il permet de monter en charge lors des pics d'utilisation et de réduire les ressources en période creuse, garantissant une haute disponibilité tout en minimisant les coûts par une utilisation efficace des ressources.
+
+Instances réservées → Incorrect.  
+	Les instances réservées permettent de réserver une capacité à l'avance et d'obtenir une réduction sur le tarif horaire. Bien qu'elles offrent des économies, elles ne sont pas directement liées au maintien de la haute disponibilité. Elles conviennent mieux aux charges de travail stables et prévisibles.
+
+Machines virtuelles préemptibles → Incorrect.  
+	Les VMs préemptibles sont des instances à courte durée de vie pouvant être arrêtées à tout moment par Google Cloud. Elles offrent des économies importantes mais ne sont pas adaptées à la haute disponibilité car elles peuvent être interrompues sans préavis.
+
+Instances Spot → Incorrect.  
+	Les instances Spot sont des capacités de calcul inutilisées proposées à prix réduit. Bien qu'elles permettent des économies, elles ne sont pas recommandées pour assurer une haute disponibilité car elles peuvent être interrompues rapidement en cas d'augmentation de la demande.`
+	},
+	{
+    id: 13,
+    texte_en: `As a project owner, you need your co-worker to deploy a new version of your social media app to App Engine. Which IAM roles should you grant to your co-worker to meet Google's recommended practices?`,
+    texte_fr: `En tant que propriétaire de projet, vous devez permettre à votre collègue de déployer une nouvelle version de votre application de réseau social sur App Engine. Quel rôle IAM devez-vous lui attribuer pour respecter les bonnes pratiques recommandées par Google ?`,
+    reponses: [
+        { texte_en: `App Engine Deployer`, 
+          texte_fr: `Déployeur App Engine`, valeur: "correcte" },
+        { texte_en: `App Engine Code Viewer`, 
+          texte_fr: `Lecteur de code App Engine`, valeur: "mauvaise" },
+        { texte_en: `App Engine Viewer`, 
+          texte_fr: `Lecteur App Engine`, valeur: "mauvaise" },
+        { texte_en: `App Engine Admin`, 
+          texte_fr: `Administrateur App Engine`, valeur: "mauvaise" },
+    ],
+    explication_en: `App Engine Deployer → Correct.  
+	This role is specifically designed for deploying new versions of App Engine applications. It grants the necessary permissions to deploy code to App Engine, making it the most suitable choice for the task at hand.
+
+App Engine Code Viewer → Incorrect.  
+	This role allows users to view the source code of an App Engine application but doesn't provide the necessary permissions for deployment.
+
+App Engine Viewer → Incorrect.  
+	This role grants read-only access to view the configuration and settings of App Engine applications. While it provides some visibility into the App Engine environment, it doesn't include the permissions required for deployment.
+
+App Engine Admin → Incorrect.  
+	This role grants full administrative access to App Engine, including the ability to manage all aspects of the application, such as viewing, deploying, and modifying. While it would allow your co-worker to deploy the new version, it exceeds the necessary permissions and may not align with Google's recommended practices.
+https://cloud.google.com/appengine/docs/standard/python/roles#predefined_roles`,
+
+	explication_fr: `Déployeur App Engine → Correct.  
+	Ce rôle est spécifiquement conçu pour déployer de nouvelles versions d'applications App Engine. Il octroie les permissions nécessaires pour déployer du code sur App Engine, ce qui en fait le choix le plus approprié.
+
+Lecteur de code App Engine → Incorrect.  
+	Ce rôle permet de visualiser le code source d'une application App Engine mais ne donne pas les droits nécessaires au déploiement.
+
+Lecteur App Engine → Incorrect.  
+	Ce rôle donne un accès en lecture seule pour voir la configuration et les paramètres des applications App Engine. Il ne comprend pas les permissions requises pour le déploiement.
+
+Administrateur App Engine → Incorrect.  
+	Ce rôle donne un accès administratif complet à App Engine, y compris la gestion, le déploiement et la modification. Bien qu'il permette le déploiement, il dépasse les permissions nécessaires et ne correspond pas aux bonnes pratiques recommandées par Google.
+https://cloud.google.com/appengine/docs/standard/python/roles#predefined_roles`
+	},
+	{
+    id: 14,
+    texte_en: `Before you migrate your on-premises workload to the Google Cloud, there are a few questions you need to answer. For example, you need to specify if your application is stateful. What does it mean?`,
+    texte_fr: `Avant de migrer votre charge de travail locale vers Google Cloud, vous devez répondre à quelques questions. Par exemple, vous devez préciser si votre application est stateful. Que signifie ce terme ?`,
+    reponses: [
+        { texte_en: `An application is stateful when stores certain data, such as the client or session ID, until that data is no longer necessary.`, 
+          texte_fr: `Une application est stateful lorsqu'elle stocke certaines données, comme l'ID client ou session, jusqu'à ce que ces données ne soient plus nécessaires.`, valeur: "correcte" },
+        { texte_en: `An application is stateless when doesn't need to store any client, transaction, or session data.`, 
+          texte_fr: `Une application est stateless lorsqu'elle n'a pas besoin de stocker des données client, transaction ou session.`, valeur: "mauvaise" },
+        { texte_en: `Each application deployed in the cloud is stateful.`, 
+          texte_fr: `Chaque application déployée dans le cloud est stateful.`, valeur: "mauvaise" },
+        { texte_en: `Every application deployed locally is stateful.`, 
+          texte_fr: `Toute application déployée localement est stateful.`, valeur: "mauvaise" },
+    ],
+    explication_en: `An application is stateful when stores certain data, such as the client or session ID, until that data is no longer necessary. → Correct.  
+	A stateful application is one that keeps track of its state across client sessions and interactions. It maintains session or user-specific information by storing certain data, such as a client or session ID, user inputs, and transactions, in memory or on the server-side, which can be referred to or altered in future interactions until that data is no longer necessary.
+
+An application is stateless when doesn't need to store any client, transaction, or session data. → Incorrect.  
+	It defines a stateless application, which doesn't store client-specific data between sessions.
+
+Each application deployed in the cloud is stateful. → Incorrect.  
+	Not all applications deployed in the cloud are stateful. It depends on the specific requirements and design of the application.
+
+Every application deployed locally is stateful. → Incorrect.  
+	Not all applications deployed locally are stateful. It depends on the specific requirements and design of the application.
+https://cloud.google.com/compute/docs/choose-compute-deployment-option#assess_your_workload`,
+
+	explication_fr: `Une application est stateful lorsqu'elle stocke certaines données, comme l'ID client ou session, jusqu'à ce que ces données ne soient plus nécessaires. → Correct.  
+	Une application stateful garde la trace de son état au travers des sessions clients et interactions. Elle conserve des informations spécifiques à la session ou à l'utilisateur en stockant certaines données, telles que l'ID client ou session, les entrées utilisateur, et les transactions, en mémoire ou côté serveur, pouvant être consultées ou modifiées lors d'interactions futures jusqu'à ce que ces données ne soient plus nécessaires.
+
+Une application est stateless lorsqu'elle n'a pas besoin de stocker des données client, transaction ou session. → Incorrect.  
+	Cette définition correspond à une application stateless, qui ne stocke pas de données spécifiques au client entre les sessions.
+
+Chaque application déployée dans le cloud est stateful. → Incorrect.  
+	Toutes les applications dans le cloud ne sont pas stateful. Cela dépend des besoins et de la conception de l'application.
+
+Toute application déployée localement est stateful. → Incorrect.  
+	De même, toutes les applications déployées localement ne sont pas stateful. Cela dépend des besoins et de la conception de l'application.
+https://cloud.google.com/compute/docs/choose-compute-deployment-option#assess_your_workload`
+	},
+	{
+    id: 15,
+    texte_en: `You want to create a custom VPC with a single subnet. The range of the subnet must be as large as possible. What range should you use?`,
+    texte_fr: `Vous souhaitez créer un VPC personnalisé avec un seul sous-réseau. La plage du sous-réseau doit être la plus grande possible. Quelle plage devez-vous utiliser ?`,
+    reponses: [
+        { texte_en: `10.0.0.0/8`, 
+          texte_fr: `10.0.0.0/8`, valeur: "correcte" },
+        { texte_en: `0.0.0.0/0`, 
+          texte_fr: `0.0.0.0/0`, valeur: "mauvaise" },
+        { texte_en: `172.16.0.0/12`, 
+          texte_fr: `172.16.0.0/12`, valeur: "mauvaise" },
+        { texte_en: `192.168.0.0/16`, 
+          texte_fr: `192.168.0.0/16`, valeur: "mauvaise" },
+    ],
+    explication_en: `10.0.0.0/8 → Correct.  
+	It is the largest private IPv4 network range as defined by RFC 1918. This range allows for up to 16,777,214 (2^24 - 2) usable IP addresses, which is larger than the other options. This is the most appropriate range to use for a single subnet where the goal is to maximize the available addresses.
+
+0.0.0.0/0 → Incorrect.  
+	It represents all possible IP addresses in the IPv4 address space. However, it's not valid for a subnet range, as it includes all public and reserved IP addresses, not just the private ones.
+
+172.16.0.0/12 → Incorrect.  
+	It allows for up to 1,048,574 (2^20 - 2) usable IP addresses, which is fewer than what 10.0.0.0/8 offers.
+
+192.168.0.0/16 → Incorrect.  
+	It allows for up to 65,534 (2^16 - 2) usable IP addresses, which is fewer than what 10.0.0.0/8 offers.
+https://cloud.google.com/vpc/docs/vpc#subnet-rangeshttps://cloud.google.com/vpc/docs/vpc#valid-ranges`,
+
+	explication_fr: `10.0.0.0/8 → Correct.  
+	C’est la plus grande plage IPv4 privée définie par la RFC 1918. Cette plage permet jusqu'à 16 777 214 (2^24 - 2) adresses IP utilisables, ce qui est plus grand que les autres options. C’est la plage la plus appropriée pour un sous-réseau unique où l’objectif est de maximiser les adresses disponibles.
+
+0.0.0.0/0 → Incorrect.  
+	Cette plage représente toutes les adresses IPv4 possibles. Ce n’est pas valide pour un sous-réseau car elle inclut toutes les adresses publiques et réservées, pas seulement les privées.
+
+172.16.0.0/12 → Incorrect.  
+	Cette plage permet jusqu'à 1 048 574 (2^20 - 2) adresses IP utilisables, ce qui est moins que 10.0.0.0/8.
+
+192.168.0.0/16 → Incorrect.  
+	Cette plage permet jusqu'à 65 534 (2^16 - 2) adresses IP utilisables, ce qui est moins que 10.0.0.0/8.
+https://cloud.google.com/vpc/docs/vpc#subnet-rangeshttps://cloud.google.com/vpc/docs/vpc#valid-ranges`
+	},
+	{
+    id: 16,
+    texte_en: `What is the minimum number of IP addresses that a VM instance needs in GCP?`,
+    texte_fr: `Quel est le nombre minimum d'adresses IP dont une instance VM a besoin dans GCP ?`,
+    reponses: [
+        {
+            texte_en: `A virtual machine instance only needs one IP address (internal IP address).`,
+            texte_fr: `Une instance de machine virtuelle a besoin d'une seule adresse IP (adresse IP interne).`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `A virtual machine instance needs two IP addresses (internal and external).`,
+            texte_fr: `Une instance de machine virtuelle a besoin de deux adresses IP (interne et externe).`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `A virtual machine instance needs three IP addresses (two internal and one external).`,
+            texte_fr: `Une instance de machine virtuelle a besoin de trois adresses IP (deux internes et une externe).`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `A virtual machine instance doesn't require any IP address.`,
+            texte_fr: `Une instance de machine virtuelle n'a pas besoin d'adresse IP.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `A virtual machine instance only needs one IP address (internal IP address). → Correct.  
+    A virtual machine (VM) instance in Google Cloud Platform (GCP) only needs one IP address, the internal IP address, to operate. Internal IP addresses are used for communication between instances in the same network, and even across different networks within GCP, assuming correct firewall rules and routes are in place.
+
+A virtual machine instance needs two IP addresses (internal and external). → Incorrect.  
+    It suggests that a VM needs an external IP address. However, this is not strictly necessary for operation. External IPs are only needed if you want the VM to be directly accessible from the internet or need to connect to services that require a whitelisted IP.
+
+A virtual machine instance needs three IP addresses (two internal and one external). → Incorrect.  
+    It incorrectly suggests that a VM needs two internal IP addresses. While it's possible for a VM to have multiple network interfaces and thus multiple internal IPs, this isn't a requirement.
+
+A virtual machine instance doesn't require any IP address. → Incorrect.  
+    It is incorrect because a VM requires at least an internal IP address to communicate with other resources within the network.
+https://cloud.google.com/compute/docs/ip-addresses`,
+
+	explication_fr: `Une instance de machine virtuelle a besoin d'une seule adresse IP (adresse IP interne). → Correct.  
+    Une instance de machine virtuelle (VM) dans Google Cloud Platform (GCP) n'a besoin que d'une adresse IP, l'adresse IP interne, pour fonctionner. Les adresses IP internes sont utilisées pour la communication entre instances dans le même réseau, et même entre différents réseaux dans GCP, à condition que les règles de pare-feu et les routes soient correctement configurées.
+
+Une instance de machine virtuelle a besoin de deux adresses IP (interne et externe). → Incorrect.  
+    Cela suggère qu'une VM a besoin d'une adresse IP externe. Cependant, ce n'est pas strictement nécessaire pour fonctionner. Les IP externes ne sont nécessaires que si vous souhaitez que la VM soit accessible directement depuis Internet ou si vous devez vous connecter à des services nécessitant une IP autorisée.
+
+Une instance de machine virtuelle a besoin de trois adresses IP (deux internes et une externe). → Incorrect.  
+    Cela suggère à tort qu'une VM a besoin de deux adresses IP internes. Bien qu'il soit possible qu'une VM ait plusieurs interfaces réseau et donc plusieurs IP internes, ce n'est pas une exigence.
+
+Une instance de machine virtuelle n'a pas besoin d'adresse IP. → Incorrect.  
+    C'est incorrect car une VM nécessite au moins une adresse IP interne pour communiquer avec d'autres ressources dans le réseau.
+https://cloud.google.com/compute/docs/ip-addresses`
+	},
+	{
+    id: 17,
+    texte_en: `Which of the following options is a benefit of using containers in a cloud environment?`,
+    texte_fr: `Quelle option suivante est un avantage de l'utilisation des conteneurs dans un environnement cloud ?`,
+    reponses: [
+        {
+            texte_en: `Containers offer automatic scaling capabilities to handle varying workloads.`,
+            texte_fr: `Les conteneurs offrent des capacités d'auto-scaling pour gérer des charges de travail variables.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `Containers provide hardware-level virtualization, allowing for better resource utilization.`,
+            texte_fr: `Les conteneurs fournissent une virtualisation au niveau matériel, permettant une meilleure utilisation des ressources.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Containers are only compatible with specific cloud providers, limiting vendor lock-in.`,
+            texte_fr: `Les conteneurs ne sont compatibles qu'avec certains fournisseurs cloud, limitant le verrouillage fournisseur.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Containers are designed for long-running applications with persistent state.`,
+            texte_fr: `Les conteneurs sont conçus pour des applications de longue durée avec état persistant.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `Containers offer automatic scaling capabilities to handle varying workloads. → Correct.  
+    One of the benefits of using containers in a cloud environment is their automatic scaling capabilities. Containers can be easily orchestrated and scaled horizontally to handle varying workloads, providing efficient resource utilization and improved performance.
+
+Containers provide hardware-level virtualization, allowing for better resource utilization. → Incorrect.  
+    Containers provide operating system-level virtualization, not hardware-level virtualization. This allows for better isolation and flexibility but does not directly impact resource utilization at the hardware level.
+
+Containers are only compatible with specific cloud providers, limiting vendor lock-in. → Incorrect.  
+    Containers are platform-agnostic and can run on various cloud providers as well as on-premises environments. They are not limited to specific cloud providers, reducing vendor lock-in concerns.
+
+Containers are designed for long-running applications with persistent state. → Incorrect.  
+    Containers are typically designed for stateless applications or applications with ephemeral state. They are not primarily intended for long-running applications with persistent state, as stateful data requires additional considerations and management.`,
+
+	explication_fr: `Les conteneurs offrent des capacités d'auto-scaling pour gérer des charges de travail variables. → Correct.  
+    Un des avantages d'utiliser des conteneurs dans un environnement cloud est leur capacité d'auto-scaling. Les conteneurs peuvent être facilement orchestrés et mis à l'échelle horizontalement pour gérer des charges de travail variables, offrant une meilleure utilisation des ressources et une performance améliorée.
+
+Les conteneurs fournissent une virtualisation au niveau matériel, permettant une meilleure utilisation des ressources. → Incorrect.  
+    Les conteneurs fournissent une virtualisation au niveau du système d'exploitation, pas au niveau matériel. Cela permet une meilleure isolation et flexibilité mais n'impacte pas directement l'utilisation des ressources matérielles.
+
+Les conteneurs ne sont compatibles qu'avec certains fournisseurs cloud, limitant le verrouillage fournisseur. → Incorrect.  
+    Les conteneurs sont indépendants de la plateforme et peuvent fonctionner sur divers fournisseurs cloud ainsi qu'en environnement local. Ils ne sont pas limités à certains fournisseurs, réduisant ainsi les risques de verrouillage fournisseur.
+
+Les conteneurs sont conçus pour des applications de longue durée avec état persistant. → Incorrect.  
+    Les conteneurs sont généralement conçus pour des applications sans état ou à état éphémère. Ils ne sont pas principalement destinés aux applications de longue durée avec état persistant, car ces dernières nécessitent une gestion supplémentaire.`
+	},
+	{
+    id: 18,
+    texte_en: `You are asked to deploy a web application so that it can scale based on the HTTP traffic. And also you have an instance template that contains this web application. What should you do?`,
+    texte_fr: `Vous devez déployer une application web afin qu'elle puisse évoluer en fonction du trafic HTTP. Vous disposez également d'un modèle d'instance contenant cette application web. Que devez-vous faire ?`,
+    reponses: [
+        {
+            texte_en: `You should create a Managed Instance Group based on the instance template. Then configure autoscaling based on HTTP traffic and configure the instance group as the backend service of an HTTP load balancer.`,
+            texte_fr: `Vous devez créer un groupe d'instances géré basé sur le modèle d'instance. Puis configurer l'auto-scaling basé sur le trafic HTTP et configurer le groupe d'instances comme service backend d'un équilibreur de charge HTTP.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `You should create a virtual machine from the instance template. Then create an App Engine application in Automatic Scaling mode that forwards all traffic to this virtual machine.`,
+            texte_fr: `Vous devez créer une machine virtuelle à partir du modèle d'instance. Puis créer une application App Engine en mode Auto-scaling qui redirige tout le trafic vers cette machine virtuelle.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should create the necessary number of instances required for peak traffic based on the instance template.`,
+            texte_fr: `Vous devez créer le nombre nécessaire d'instances pour le trafic maximal basé sur le modèle d'instance.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `You should create a managed instance group based on the instance template. Then configure autoscaling based on CPU utilization.`,
+            texte_fr: `Vous devez créer un groupe d'instances géré basé sur le modèle d'instance. Puis configurer l'auto-scaling basé sur l'utilisation CPU.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `You should create a Managed Instance Group based on the instance template. Then configure autoscaling based on HTTP traffic and configure the instance group as the backend service of an HTTP load balancer. → Correct.  
+    It uses a Managed Instance Group (MIG) with autoscaling based on HTTP traffic, which is exactly what the question is asking for. Managed Instance Groups in Google Cloud offer autoscaling, which allows the group to automatically add or remove instances based on increases or decreases in load, measured according to a chosen metric, in this case, HTTP traffic. This setup ensures that the application can scale up or down based on the amount of incoming traffic, maintaining performance while also controlling costs. Moreover, by configuring the MIG as the backend service of an HTTP(S) load balancer, incoming traffic can be evenly distributed across all instances in the group, ensuring high availability and reliable performance.
+
+You should create a virtual machine from the instance template. Then create an App Engine application in Automatic Scaling mode that forwards all traffic to this virtual machine. → Incorrect.  
+    It introduces unnecessary complexity by using App Engine to forward traffic to a virtual machine. App Engine is a fully managed platform and doesn't require managing individual VM instances.
+
+You should create the necessary number of instances required for peak traffic based on the instance template. → Incorrect.  
+    Pre-provisioning instances for peak traffic is not cost-efficient and doesn't account for fluctuations in traffic.
+
+You should create a managed instance group based on the instance template. Then configure autoscaling based on CPU utilization. → Incorrect.  
+    It uses CPU utilization as the autoscaling metric, which may not accurately represent the load from HTTP traffic on the application.
+https://cloud.google.com/compute/docs/autoscaler`,
+    
+	explication_fr: `Vous devez créer un groupe d'instances géré basé sur le modèle d'instance. Puis configurer l'auto-scaling basé sur le trafic HTTP et configurer le groupe d'instances comme service backend d'un équilibreur de charge HTTP. → Correct.  
+    Cela utilise un groupe d'instances géré (MIG) avec auto-scaling basé sur le trafic HTTP, ce que la question demande précisément. Les groupes d'instances gérés dans Google Cloud offrent un auto-scaling qui permet d'ajouter ou de supprimer automatiquement des instances en fonction des augmentations ou diminutions de charge, mesurées selon une métrique choisie, ici le trafic HTTP. Cette configuration garantit que l'application peut évoluer en fonction du trafic entrant, maintenant les performances tout en contrôlant les coûts. De plus, en configurant le MIG comme service backend d'un équilibreur de charge HTTP(S), le trafic entrant est distribué équitablement entre toutes les instances du groupe, assurant haute disponibilité et performance fiable.
+
+Vous devez créer une machine virtuelle à partir du modèle d'instance. Puis créer une application App Engine en mode Auto-scaling qui redirige tout le trafic vers cette machine virtuelle. → Incorrect.  
+    Cela introduit une complexité inutile en utilisant App Engine pour rediriger le trafic vers une VM. App Engine est une plateforme entièrement gérée qui ne nécessite pas la gestion des instances VM individuelles.
+
+Vous devez créer le nombre nécessaire d'instances pour le trafic maximal basé sur le modèle d'instance. → Incorrect.  
+    Préallouer des instances pour le pic de trafic n'est pas rentable et ne prend pas en compte les fluctuations du trafic.
+
+Vous devez créer un groupe d'instances géré basé sur le modèle d'instance. Puis configurer l'auto-scaling basé sur l'utilisation CPU. → Incorrect.  
+    L'auto-scaling basé sur l'utilisation CPU peut ne pas représenter précisément la charge issue du trafic HTTP sur l'application.
+https://cloud.google.com/compute/docs/autoscaler`
+	},
+	{
+    id: 19,
+    texte_en: `When deploying a web application on Google Cloud Platform, which service provides automatic scaling and load balancing capabilities?`,
+    texte_fr: `Lors du déploiement d'une application web sur Google Cloud Platform, quel service fournit des capacités d'auto-scaling et d'équilibrage de charge ?`,
+    reponses: [
+        {
+            texte_en: `App Engine`,
+            texte_fr: `App Engine`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `Cloud Functions`,
+            texte_fr: `Cloud Functions`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Compute Engine`,
+            texte_fr: `Compute Engine`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Cloud Run`,
+            texte_fr: `Cloud Run`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `App Engine → Correct.  
+    App Engine is a fully managed platform-as-a-service (PaaS) offering that provides automatic scaling and load balancing capabilities for web applications. It abstracts away infrastructure concerns, allowing developers to focus on writing code rather than managing servers.
+
+Cloud Functions → Incorrect.  
+    Cloud Functions is a serverless compute platform that allows you to run event-driven functions. While it provides automatic scaling based on demand, it is not designed specifically for deploying and managing web applications.
+
+Compute Engine → Incorrect.  
+    Compute Engine offers virtual machines (VMs) that can be customized and controlled directly by the user. While it provides flexibility and control over the infrastructure, it requires manual scaling and load balancing configuration.
+
+Cloud Run → Incorrect.  
+    Cloud Run is a fully managed serverless container platform that automatically scales and load balances HTTP requests. It is suitable for containerized workloads but may require additional configuration and setup compared to App Engine for deploying and managing web applications.`,
+
+	explication_fr: `App Engine → Correct.  
+    App Engine est une plateforme PaaS entièrement gérée qui fournit des capacités d'auto-scaling et d'équilibrage de charge pour les applications web. Elle abstrait les préoccupations d'infrastructure, permettant aux développeurs de se concentrer sur l'écriture du code plutôt que sur la gestion des serveurs.
+
+Cloud Functions → Incorrect.  
+    Cloud Functions est une plateforme serverless permettant d'exécuter des fonctions événementielles. Bien qu'elle offre un auto-scaling selon la demande, elle n'est pas conçue spécifiquement pour déployer et gérer des applications web.
+
+Compute Engine → Incorrect.  
+    Compute Engine propose des machines virtuelles personnalisables et contrôlées directement par l'utilisateur. Bien qu'elle offre flexibilité et contrôle, elle nécessite une configuration manuelle de l'auto-scaling et de l'équilibrage de charge.
+
+Cloud Run → Incorrect.  
+    Cloud Run est une plateforme serverless de conteneurs entièrement gérée qui scale automatiquement et équilibre les requêtes HTTP. Elle convient aux charges de travail conteneurisées mais peut nécessiter une configuration supplémentaire par rapport à App Engine pour déployer et gérer des applications web.`
+	},
+	{
+    id: 20,
+    texte_en: `A company is planning to migrate its existing on-premises infrastructure to the cloud. They have identified the following requirements: scalability, high availability, and cost optimization. Which of the following strategies would be most suitable for meeting these requirements?`,
+    texte_fr: `Une entreprise prévoit de migrer son infrastructure locale existante vers le cloud. Elle a identifié les exigences suivantes : scalabilité, haute disponibilité, et optimisation des coûts. Quelle stratégie serait la plus adaptée pour répondre à ces exigences ?`,
+    reponses: [
+        {
+            texte_en: `Serverless architecture: Developing applications using serverless services to achieve automatic scaling, high availability, and pay-as-you-go pricing.`,
+            texte_fr: `Architecture serverless : Développer des applications utilisant des services serverless pour atteindre l'auto-scaling, la haute disponibilité, et la tarification à l'usage.`,
+            valeur: "correcte"
+        },
+        {
+            texte_en: `Lift and shift migration: Moving the existing infrastructure as-is to the cloud without making significant architectural changes.`,
+            texte_fr: `Migration lift and shift : Migrer l'infrastructure existante telle quelle vers le cloud sans changements architecturaux significatifs.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Multi-region deployment: Deploying the infrastructure across multiple regions to ensure redundancy and fault tolerance.`,
+            texte_fr: `Déploiement multi-régions : Déployer l'infrastructure sur plusieurs régions pour assurer redondance et tolérance aux pannes.`,
+            valeur: "mauvaise"
+        },
+        {
+            texte_en: `Containerization: Migrating applications to container platforms for increased scalability, isolation, and portability.`,
+            texte_fr: `Containerisation : Migrer les applications vers des plateformes conteneurisées pour plus de scalabilité, isolation, et portabilité.`,
+            valeur: "mauvaise"
+        }
+    ],
+    explication_en: `Serverless architecture: Developing applications using serverless services to achieve automatic scaling, high availability, and pay-as-you-go pricing. → Correct.  
+    Serverless architecture is most suitable for meeting the requirements of scalability, high availability, and cost optimization. Serverless services, such as AWS Lambda or Azure Functions, automatically scale based on demand, ensuring scalability. They also provide built-in high availability and charge based on the actual usage, promoting cost optimization.
+
+Lift and shift migration: Moving the existing infrastructure as-is to the cloud without making significant architectural changes. → Incorrect.  
+    Lift and shift migration involves moving the existing infrastructure to the cloud without significant architectural changes. While it may provide some benefits in terms of flexibility and management, it may not address scalability, high availability, and cost optimization effectively.
+
+Multi-region deployment: Deploying the infrastructure across multiple regions to ensure redundancy and fault tolerance. → Incorrect.  
+    While a multi-region deployment can improve fault tolerance and redundancy, it may not directly address scalability and cost optimization. Additionally, it may add complexity to the infrastructure management.
+
+Containerization: Migrating applications to container platforms for increased scalability, isolation, and portability. → Incorrect.  
+    Containerization offers scalability and portability but may require additional management and orchestration tools, which can complicate achieving cost optimization and high availability without further architectural considerations.`,
+
+	explication_fr: `Architecture serverless : Développer des applications utilisant des services serverless pour atteindre l'auto-scaling, la haute disponibilité, et la tarification à l'usage. → Correct.  
+    L'architecture serverless est la plus adaptée pour répondre aux exigences de scalabilité, haute disponibilité, et optimisation des coûts. Les services serverless, tels qu'AWS Lambda ou Azure Functions, scalent automatiquement en fonction de la demande, garantissant la scalabilité. Ils fournissent également une haute disponibilité intégrée et facturent en fonction de l'utilisation réelle, favorisant l'optimisation des coûts.
+
+Migration lift and shift : Migrer l'infrastructure existante telle quelle vers le cloud sans changements architecturaux significatifs. → Incorrect.  
+    La migration lift and shift consiste à déplacer l'infrastructure existante vers le cloud sans modifications architecturales importantes. Bien que cela puisse offrir certains avantages en termes de flexibilité et de gestion, cela peut ne pas répondre efficacement aux exigences de scalabilité, haute disponibilité et optimisation des coûts.
+
+Déploiement multi-régions : Déployer l'infrastructure sur plusieurs régions pour assurer redondance et tolérance aux pannes. → Incorrect.  
+    Bien qu'un déploiement multi-régions puisse améliorer la tolérance aux pannes et la redondance, il ne répond pas directement à la scalabilité et à l'optimisation des coûts. De plus, cela peut ajouter de la complexité à la gestion de l'infrastructure.
+
+Containerisation : Migrer les applications vers des plateformes conteneurisées pour plus de scalabilité, isolation, et portabilité. → Incorrect.  
+    La containerisation offre scalabilité et portabilité mais peut nécessiter des outils de gestion et d'orchestration supplémentaires, ce qui peut compliquer l'atteinte de l'optimisation des coûts et de la haute disponibilité sans considérations architecturales supplémentaires.`
+	},
+	{
+    id: 21,
+    texte_en: `An internal company application is deployed with Compute Engine VMs. This application is used only during regular business hours. You need to backup the VMs outside the business hours and remove images older than 30 days to reduce expenses. What should you do?`,
+    texte_fr: `Une application interne de l'entreprise est déployée avec des VM Compute Engine. Cette application est utilisée uniquement pendant les heures de bureau. Vous devez sauvegarder les VM en dehors des heures de travail et supprimer les images de plus de 30 jours pour réduire les coûts. Que devez-vous faire ?`,
+    reponses: [
+        { texte_en: `You should enable a snapshot schedule for automated creation of daily snapshots and set snapshot retention policy to 30 days.`, 
+          texte_fr: `Vous devez activer une planification de snapshots pour la création automatique de snapshots quotidiens et définir une politique de conservation des snapshots à 30 jours.`, valeur: "correcte" },
+        { texte_en: `You should add three metadata tags on the Compute Engine instance (enabling snapshot creation, specifying the snapshot schedule, specifying the retention period = 30 days).`, 
+          texte_fr: `Vous devez ajouter trois balises de métadonnées sur l'instance Compute Engine (activation de la création de snapshots, spécification de la planification des snapshots, spécification de la période de conservation = 30 jours).`, valeur: "mauvaise" },
+        { texte_en: `You should use Cloud Scheduler to trigger a Cloud Function that creates snapshots of the disk on a daily basis. Also you should use Cloud Scheduler to trigger another Cloud Function that iterates over the snapshots and removes older than 30 days.`, 
+          texte_fr: `Vous devez utiliser Cloud Scheduler pour déclencher une Cloud Function qui crée des snapshots du disque quotidiennement. Vous devez également utiliser Cloud Scheduler pour déclencher une autre Cloud Function qui parcourt les snapshots et supprime ceux de plus de 30 jours.`, valeur: "mauvaise" },
+        { texte_en: `You should use AppEngine Cron service to trigger a custom script that creates snapshots of the disk on a daily basis. Also you should use AppEngine Cron service to trigger another custom script that iterates over the snapshots and removes snapshots older than 30 days.`, 
+          texte_fr: `Vous devez utiliser le service Cron d'AppEngine pour déclencher un script personnalisé qui crée quotidiennement des snapshots du disque. Vous devez également utiliser le service Cron d'AppEngine pour déclencher un autre script personnalisé qui parcourt les snapshots et supprime ceux de plus de 30 jours.`, valeur: "mauvaise" },
+    ],
+    explication_en: `You should enable a snapshot schedule for automated creation of daily snapshots and set snapshot retention policy to 30 days. → Correct.  
+		It uses the built-in Google Cloud snapshot scheduling and retention feature, which allows you to automate the creation of snapshots and the deletion of old snapshots, thus reducing manual effort and potential errors. In Google Cloud, you can create snapshot schedules for persistent disks, which allow automated creation of snapshots on a regular schedule. You can also set the snapshot retention policy to specify how long you want the snapshots to be retained (in this case, 30 days).
+
+You should add three metadata tags on the Compute Engine instance (enabling snapshot creation, specifying the snapshot schedule, specifying the retention period = 30 days). → Incorrect.  
+		Metadata tags in Google Cloud are used for labeling resources and do not support complex actions like snapshot scheduling or setting retention policies.
+
+You should use Cloud Scheduler to trigger a Cloud Function that creates snapshots of the disk on a daily basis. Also you should use Cloud Scheduler to trigger another Cloud Function that iterates over the snapshots and removes older than 30 days. → Incorrect.  
+		It proposes using Cloud Scheduler with Cloud Functions. While this could work, it involves significantly more setup and maintenance compared to using the built-in snapshot scheduling and retention feature of Google Cloud.
+
+You should use AppEngine Cron service to trigger a custom script that creates snapshots of the disk on a daily basis. Also you should use AppEngine Cron service to trigger another custom script that iterates over the snapshots and removes snapshots older than 30 days. → Incorrect.  
+		It proposes using AppEngine Cron with custom scripts. While this could work, it involves significantly more setup and maintenance compared to using the built-in snapshot scheduling and retention feature of Google Cloud.`,
+    
+    explication_fr: `Vous devez activer une planification de snapshots pour la création automatique de snapshots quotidiens et définir une politique de conservation des snapshots à 30 jours. → Correct.  
+		Elle utilise la fonction intégrée de planification et de conservation des snapshots de Google Cloud, ce qui permet d'automatiser la création de snapshots et la suppression des anciens, réduisant ainsi les efforts manuels et les erreurs potentielles. Dans Google Cloud, vous pouvez créer des plannings de snapshots pour les disques persistants, permettant la création automatique à intervalles réguliers. Vous pouvez également définir une politique de conservation pour préciser la durée de conservation des snapshots (dans ce cas, 30 jours).
+
+Vous devez ajouter trois balises de métadonnées sur l'instance Compute Engine (activation de la création de snapshots, spécification de la planification des snapshots, spécification de la période de conservation = 30 jours). → Incorrect.  
+		Les balises de métadonnées dans Google Cloud sont utilisées pour étiqueter les ressources et ne prennent pas en charge des actions complexes telles que la planification de snapshots ou la définition de politiques de conservation.
+
+Vous devez utiliser Cloud Scheduler pour déclencher une Cloud Function qui crée des snapshots du disque quotidiennement. Vous devez également utiliser Cloud Scheduler pour déclencher une autre Cloud Function qui parcourt les snapshots et supprime ceux de plus de 30 jours. → Incorrect.  
+		Cela propose d'utiliser Cloud Scheduler avec des Cloud Functions. Bien que cela puisse fonctionner, cela nécessite une configuration et une maintenance beaucoup plus importantes par rapport à l'utilisation de la fonctionnalité intégrée de Google Cloud.
+
+Vous devez utiliser le service Cron d'AppEngine pour déclencher un script personnalisé qui crée quotidiennement des snapshots du disque. Vous devez également utiliser le service Cron d'AppEngine pour déclencher un autre script personnalisé qui parcourt les snapshots et supprime ceux de plus de 30 jours. → Incorrect.  
+		Cela propose d'utiliser AppEngine Cron avec des scripts personnalisés. Bien que cela puisse fonctionner, cela nécessite une configuration et une maintenance beaucoup plus importantes par rapport à l'utilisation de la fonctionnalité intégrée de Google Cloud.`
+	},
+	{
+    id: 22,
+    texte_en: `You are designing an application and you want to be sure that the containers are located as close to each other as possible, in order to minimize latency. Which design decision will you recommend?`,
+    texte_fr: `Vous concevez une application et vous souhaitez vous assurer que les conteneurs soient situés le plus près possible les uns des autres, afin de minimiser la latence. Quelle décision de conception recommandez-vous ?`,
+    reponses: [
+        { texte_en: `You should place the containers in the same pod.`, 
+          texte_fr: `Vous devez placer les conteneurs dans le même pod.`, valeur: "correcte" },
+        { texte_en: `You should place the containers in the same cluster.`, 
+          texte_fr: `Vous devez placer les conteneurs dans le même cluster.`, valeur: "mauvaise" },
+        { texte_en: `You should place the containers in the same namespace.`, 
+          texte_fr: `Vous devez placer les conteneurs dans le même espace de noms (namespace).`, valeur: "mauvaise" },
+        { texte_en: `You should give the containers the same labels.`, 
+          texte_fr: `Vous devez donner les mêmes labels aux conteneurs.`, valeur: "mauvaise" },
+    ],
+    explication_en: `You should place the containers in the same pod. → Correct.  
+		In Kubernetes, a pod represents the smallest deployable unit of computing that you can create and manage in a cluster. A pod is a group of one or more containers that share network and storage resources and run in the same environment. Containers in a pod communicate over localhost, which minimizes latency.
+
+You should place the containers in the same cluster. → Incorrect.  
+		Containers in the same cluster can still be scheduled on different nodes, introducing latency.
+
+You should place the containers in the same namespace. → Incorrect.  
+		Namespaces are logical groupings for access control and resource organization, not physical proximity.
+
+You should give the containers the same labels. → Incorrect.  
+		Labels are used for organizing and selecting resources, not placement decisions.`,
+    
+    explication_fr: `Vous devez placer les conteneurs dans le même pod. → Correct.  
+		Dans Kubernetes, un pod représente la plus petite unité déployable. Un pod regroupe un ou plusieurs conteneurs qui partagent les ressources réseau et de stockage, et s'exécutent dans le même environnement. Les conteneurs d’un pod peuvent communiquer via localhost, ce qui minimise la latence.
+
+Vous devez placer les conteneurs dans le même cluster. → Incorrect.  
+		Les conteneurs dans un même cluster peuvent être programmés sur différents nœuds, ce qui peut introduire de la latence.
+
+Vous devez placer les conteneurs dans le même espace de noms (namespace). → Incorrect.  
+		Les namespaces sont des regroupements logiques pour le contrôle d’accès, pas pour la proximité physique.
+
+Vous devez donner les mêmes labels aux conteneurs. → Incorrect.  
+		Les labels servent à organiser et sélectionner les ressources, pas à déterminer leur emplacement.`
+	},
+	{
+    id: 23,
+    texte_en: `What is the purpose of a Virtual Private Cloud (VPC) in a cloud computing environment?`,
+    texte_fr: `Quel est le but d’un Cloud Privé Virtuel (VPC) dans un environnement de cloud computing ?`,
+    reponses: [
+        { texte_en: `To establish a secure and isolated network environment for cloud resources.`, 
+          texte_fr: `Établir un environnement réseau sécurisé et isolé pour les ressources cloud.`, valeur: "correcte" },
+        { texte_en: `To provide public internet access to resources within the cloud.`, 
+          texte_fr: `Fournir un accès Internet public aux ressources dans le cloud.`, valeur: "mauvaise" },
+        { texte_en: `To enable direct communication between cloud instances and on-premises servers.`, 
+          texte_fr: `Permettre une communication directe entre les instances cloud et les serveurs sur site.`, valeur: "mauvaise" },
+        { texte_en: `To manage and control access to cloud services and APIs.`, 
+          texte_fr: `Gérer et contrôler l'accès aux services cloud et aux API.`, valeur: "mauvaise" },
+    ],
+    explication_en: `To establish a secure and isolated network environment for cloud resources. → Correct.  
+		A VPC allows you to define your own network topology with IP ranges, subnets, routes, and gateways, enabling secure and isolated environments.
+
+To provide public internet access to resources within the cloud. → Incorrect.  
+		This is not the primary purpose of a VPC.
+
+To enable direct communication between cloud instances and on-premises servers. → Incorrect.  
+		This is a feature supported by VPC, but not its main purpose.
+
+To manage and control access to cloud services and APIs. → Incorrect.  
+		This is handled by IAM and other services, not the core purpose of a VPC.`,
+    
+    explication_fr: `Établir un environnement réseau sécurisé et isolé pour les ressources cloud. → Correct.  
+		Un VPC permet de définir une topologie réseau personnalisée avec des plages IP, des sous-réseaux, des routes et des passerelles, afin de créer des environnements sécurisés et isolés.
+
+Fournir un accès Internet public aux ressources dans le cloud. → Incorrect.  
+		Ce n'est pas l'objectif principal d’un VPC.
+
+Permettre une communication directe entre les instances cloud et les serveurs sur site. → Incorrect.  
+		C’est une fonctionnalité d’un VPC, mais ce n’est pas son but principal.
+
+Gérer et contrôler l'accès aux services cloud et aux API. → Incorrect.  
+		Cela est pris en charge par IAM et d'autres services, pas par le VPC lui-même.`
+	},
+	{
+    id: 24,
+    texte_en: `You don't know how long your data will be stored in the Google Cloud bucket. You are currently using Standard storage class. Which bucket feature you can use to switch storage class for objects when they reach or pass a certain age (for example 30 days)?`,
+    texte_fr: `Vous ne savez pas combien de temps vos données seront stockées dans le bucket Google Cloud. Vous utilisez actuellement la classe de stockage Standard. Quelle fonctionnalité de bucket pouvez-vous utiliser pour changer la classe de stockage des objets lorsqu'ils atteignent ou dépassent un certain âge (par exemple 30 jours) ?`,
+    reponses: [
+        { texte_en: `Object lifecycle management rules`, 
+          texte_fr: `Règles de gestion du cycle de vie des objets`, valeur: "correcte" },
+        { texte_en: `Object versioning setting`, 
+          texte_fr: `Paramètre de gestion des versions des objets`, valeur: "mauvaise" },
+        { texte_en: `Object permissions`, 
+          texte_fr: `Autorisations des objets`, valeur: "mauvaise" },
+        { texte_en: `Object protection`, 
+          texte_fr: `Protection des objets`, valeur: "mauvaise" },
+    ],
+    explication_en: `Object lifecycle management rules → Correct.  
+		They allow setting policies that change storage class or delete objects based on their age.
+
+Object versioning setting → Incorrect.  
+		This keeps previous versions of objects, but doesn’t change storage class.
+
+Object permissions → Incorrect.  
+		Permissions control access, not lifecycle actions.
+
+Object protection → Incorrect.  
+		Not related to changing storage class automatically.`,
+    
+    explication_fr: `Règles de gestion du cycle de vie des objets → Correct.  
+		Elles permettent de définir des règles pour changer la classe de stockage ou supprimer les objets en fonction de leur âge.
+
+Paramètre de gestion des versions des objets → Incorrect.  
+		Ce paramètre permet de conserver les versions précédentes d’un objet, mais ne modifie pas la classe de stockage.
+
+Autorisations des objets → Incorrect.  
+		Les autorisations contrôlent l’accès aux objets, mais pas leur cycle de vie.
+
+Protection des objets → Incorrect.  
+		Ce n’est pas une fonctionnalité permettant de modifier la classe de stockage automatiquement.`
+	},
+	{
+    id: 25,
+    texte_en: `A regular batch job transfers customer data from a CRM system to BigQuery dataset and uses several virtual machines. You can tolerate some virtual machines going down. What should you do to reduce the costs of this job?`,
+    texte_fr: `Un travail batch régulier transfère les données clients d'un système CRM vers un dataset BigQuery et utilise plusieurs machines virtuelles. Vous pouvez tolérer que certaines machines tombent en panne. Que devez-vous faire pour réduire les coûts de ce travail ?`,
+    reponses: [
+        { texte_en: `You should use preemptible compute engine instances.`, 
+          texte_fr: `Vous devez utiliser des instances Compute Engine préemptibles.`, valeur: "correcte" },
+        { texte_en: `You should only use e2-micro instances.`, 
+          texte_fr: `Vous devez uniquement utiliser des instances e2-micro.`, valeur: "mauvaise" },
+        { texte_en: `You should use a fleet of e2-micro instances behind a Managed Instances Group with autoscaling enabled.`, 
+          texte_fr: `Vous devez utiliser un ensemble d'instances e2-micro derrière un groupe d'instances géré avec l'autoscaling activé.`, valeur: "mauvaise" },
+        { texte_en: `You should only use e2-standard-32 instances.`, 
+          texte_fr: `Vous devez uniquement utiliser des instances e2-standard-32.`, valeur: "mauvaise" },
+    ],
+    explication_en: `You should use preemptible compute engine instances. → Correct.  
+		They offer up to 80% cost savings and are ideal for fault-tolerant, short-lived batch workloads.
+
+You should only use e2-micro instances. → Incorrect.  
+		They may not offer enough resources for large batch jobs.
+
+You should use a fleet of e2-micro instances behind a Managed Instances Group with autoscaling enabled. → Incorrect.  
+		While this scales dynamically, it adds unnecessary complexity for a simple batch job.
+
+You should only use e2-standard-32 instances. → Incorrect.  
+		These are expensive and more powerful than required for the described workload.`,
+    
+    explication_fr: `Vous devez utiliser des instances Compute Engine préemptibles. → Correct.  
+		Elles offrent jusqu'à 80 % d'économies et sont idéales pour les tâches batch tolérantes aux pannes et de courte durée.
+
+Vous devez uniquement utiliser des instances e2-micro. → Incorrect.  
+		Elles pourraient ne pas fournir suffisamment de ressources pour des tâches batch importantes.
+
+Vous devez utiliser un ensemble d'instances e2-micro derrière un groupe d'instances géré avec l'autoscaling activé. → Incorrect.  
+		Même si cela permet une montée en charge dynamique, c’est inutilement complexe pour un simple batch.
+
+Vous devez uniquement utiliser des instances e2-standard-32. → Incorrect.  
+		Ces instances sont coûteuses et surdimensionnées pour la charge de travail décrite.`
+	},
+	{
+	id: 26,
+	texte_en: `A multinational company is considering migrating its extensive data infrastructure to the cloud. They have strict data residency requirements due to regulatory compliance and are concerned about the potential impact on network latency and data transfer costs. Which of the following cloud solutions would best address these concerns?`,
+	texte_fr: `Une entreprise multinationale envisage de migrer son infrastructure de données vers le cloud. Elle a des exigences strictes en matière de résidence des données en raison de la conformité réglementaire et s’inquiète de l’impact potentiel sur la latence réseau et les coûts de transfert de données. Laquelle des solutions cloud suivantes répondrait le mieux à ces préoccupations ?`,
+	reponses: [
+		{ texte_en: `Virtual Private Cloud (VPC): Establishing a private and isolated network within the cloud provider's infrastructure to maintain control over data residency and reduce network latency.`, 
+		  texte_fr: `Cloud Privé Virtuel (VPC) : établir un réseau privé et isolé dans l'infrastructure du fournisseur cloud pour maintenir le contrôle sur la résidence des données et réduire la latence réseau.`, valeur: "correcte" },
+		{ texte_en: `Content Delivery Network (CDN): Leveraging a distributed network of servers to cache and deliver content closer to end-users, reducing network latency and data transfer costs.`, 
+		  texte_fr: `Réseau de diffusion de contenu (CDN) : utiliser un réseau distribué de serveurs pour mettre en cache et diffuser le contenu plus près des utilisateurs finaux, réduisant ainsi la latence et les coûts de transfert.`, valeur: "mauvaise" },
+		{ texte_en: `Direct Connect: Establishing a dedicated network connection between the on-premises infrastructure and the cloud provider's data centers to minimize network latency and ensure secure data transfer.`, 
+		  texte_fr: `Connexion directe : établir une connexion réseau dédiée entre l'infrastructure sur site et les centres de données du fournisseur cloud pour minimiser la latence réseau et garantir un transfert sécurisé.`, valeur: "mauvaise" },
+		{ texte_en: `Auto Scaling: Configuring the infrastructure to automatically adjust resource capacity based on demand, optimizing network latency and cost efficiency.`, 
+		  texte_fr: `Mise à l'échelle automatique : configurer l'infrastructure pour ajuster automatiquement la capacité en fonction de la demande, optimisant la latence et les coûts.`, valeur: "mauvaise" }
+	],
+	explication_en: `Virtual Private Cloud (VPC) → Correct.  
+		VPC would best address the concerns of data residency and network latency. It allows creating a private network within the cloud provider’s infrastructure and placing resources in compliant regions.
+
+Content Delivery Network (CDN) → Incorrect.  
+		CDNs help reduce latency for content delivery, but do not solve data residency or cost concerns directly.
+
+Direct Connect → Incorrect.  
+		It reduces latency and improves security for transfers, but doesn't solve data residency or cost issues alone.
+
+Auto Scaling → Incorrect.  
+		Auto Scaling optimizes resource usage, not residency or latency concerns.`,
+	
+	explication_fr: `Cloud Privé Virtuel (VPC) → Correct.  
+		Un VPC permet de créer un réseau privé dans le cloud et de placer les ressources dans des régions conformes à la réglementation, répondant ainsi aux préoccupations de résidence des données et de latence.
+
+Réseau de diffusion de contenu (CDN) → Incorrect.  
+		Un CDN améliore la diffusion de contenu, mais ne traite pas directement les exigences de résidence ou les coûts de transfert.
+
+Connexion directe → Incorrect.  
+		Réduit la latence et sécurise les transferts, mais ne répond pas directement à la résidence des données ni aux coûts.
+
+Mise à l'échelle automatique → Incorrect.  
+		Elle optimise l’utilisation des ressources, mais pas la résidence des données ni la latence.`
+	},
+	{
+	id: 27,
+	texte_en: `As a new Cloud Engineer, you need to manage your first GCP project. The project will involve product owners, developers and testers. You need to make sure that only specific members of the development team have access to sensitive information (PII data). To do this, you want to assign the appropriate IAM roles. What should you do?`,
+	texte_fr: `En tant que nouvel ingénieur cloud, vous devez gérer votre premier projet GCP. Ce projet impliquera des propriétaires de produit, des développeurs et des testeurs. Vous devez vous assurer que seuls certains membres de l’équipe de développement aient accès aux informations sensibles (données PII). Que devez-vous faire pour attribuer les bons rôles IAM ?`,
+	reponses: [
+		{ texte_en: `You should create groups. Assign an IAM Predefined role to each group as required, including those who should have access to sensitive data. Than, assign users to groups.`, 
+		  texte_fr: `Vous devez créer des groupes. Attribuez un rôle IAM prédéfini à chaque groupe selon les besoins, y compris à ceux qui doivent avoir accès aux données sensibles. Ensuite, affectez les utilisateurs aux groupes.`, valeur: "correcte" },
+		{ texte_en: `You should create groups. Assign a Custom role to each group, including those who should have access to sensitive data. Then, assign users to groups.`, 
+		  texte_fr: `Vous devez créer des groupes. Attribuez un rôle personnalisé à chaque groupe, y compris à ceux qui doivent avoir accès aux données sensibles. Ensuite, affectez les utilisateurs aux groupes.`, valeur: "mauvaise" },
+		{ texte_en: `You should create groups. Assign a basic role to each group, and then assign users to groups.`, 
+		  texte_fr: `Vous devez créer des groupes. Attribuez un rôle de base à chaque groupe, puis affectez les utilisateurs aux groupes.`, valeur: "mauvaise" },
+		{ texte_en: `You should assign a basic role to each user.`, 
+		  texte_fr: `Vous devez attribuer un rôle de base à chaque utilisateur.`, valeur: "mauvaise" }
+	],
+	explication_en: `Assigning IAM Predefined roles to groups → Correct.  
+		Provides granular control and is scalable. Predefined roles are designed for common job functions and prevent privilege escalation.
+
+Assigning Custom roles → Incorrect.  
+		Harder to manage and may lead to over-provisioning if not carefully defined.
+
+Assigning Basic roles → Incorrect.  
+		Too broad and can give excessive permissions (e.g., Editor includes write access across all services).
+
+Assigning roles to each user individually → Incorrect.  
+		Inefficient and hard to manage at scale.`,
+	
+	explication_fr: `Attribuer des rôles prédéfinis IAM à des groupes → Correct.  
+		Cela permet un contrôle précis et une gestion évolutive. Les rôles prédéfinis sont adaptés à des fonctions spécifiques sans excès de privilèges.
+
+Attribuer des rôles personnalisés → Incorrect.  
+		Difficiles à gérer et peuvent accorder trop de droits si mal définis.
+
+Attribuer des rôles de base → Incorrect.  
+		Trop larges, avec des permissions excessives (ex : Editor donne des droits d’écriture globaux).
+
+Attribuer des rôles à chaque utilisateur → Incorrect.  
+		Long et difficile à maintenir dans une grande organisation.`
+	},
+	{
+	id: 28,
+	texte_en: `What is a recommended practice for setting up a cloud solution environment in a secure and efficient manner?`,
+	texte_fr: `Quelle est une pratique recommandée pour mettre en place un environnement cloud de manière sécurisée et efficace ?`,
+	reponses: [
+		{ texte_en: `Implement granular access control and least privilege principles.`, 
+		  texte_fr: `Mettre en œuvre un contrôle d’accès granulaire et le principe du moindre privilège.`, valeur: "correcte" },
+		{ texte_en: `Grant unrestricted access to all users for seamless collaboration.`, 
+		  texte_fr: `Accorder un accès illimité à tous les utilisateurs pour une collaboration fluide.`, valeur: "mauvaise" },
+		{ texte_en: `Use a single shared account for all users to simplify management.`, 
+		  texte_fr: `Utiliser un seul compte partagé pour tous les utilisateurs afin de simplifier la gestion.`, valeur: "mauvaise" },
+		{ texte_en: `Disable all logging and monitoring to minimize resource usage.`, 
+		  texte_fr: `Désactiver tous les journaux et la surveillance pour minimiser l’utilisation des ressources.`, valeur: "mauvaise" }
+	],
+	explication_en: `Granular access and least privilege → Correct.  
+		This reduces risk of unauthorized access and limits potential damage.
+
+Unrestricted access → Incorrect.  
+		Creates serious security risks.
+
+Shared accounts → Incorrect.  
+		Lacks accountability and auditing.
+
+Disabling logs → Incorrect.  
+		Prevents monitoring and incident response.`,
+	
+	explication_fr: `Contrôle d’accès granulaire et moindre privilège → Correct.  
+		Limite les risques d’accès non autorisé et les dommages potentiels.
+
+Accès illimité → Incorrect.  
+		Augmente fortement les risques de sécurité.
+
+Compte partagé → Incorrect.  
+		Impossible de tracer les actions des utilisateurs.
+
+Désactiver les journaux → Incorrect.  
+		Empêche la détection des incidents et la surveillance.`
+	},
+	{
+	id: 29,
+	texte_en: `Which of the following is an advantage of using Infrastructure as Code (IaC) in cloud computing?`,
+	texte_fr: `Lequel des avantages suivants est associé à l’utilisation de l’Infrastructure as Code (IaC) dans le cloud computing ?`,
+	reponses: [
+		{ texte_en: `IaC simplifies the process of deploying and managing complex cloud environments.`, 
+		  texte_fr: `L’IaC simplifie le déploiement et la gestion d’environnements cloud complexes.`, valeur: "correcte" },
+		{ texte_en: `IaC allows for manual provisioning and configuration of cloud resources.`, 
+		  texte_fr: `L’IaC permet un provisionnement manuel des ressources cloud.`, valeur: "mauvaise" },
+		{ texte_en: `IaC eliminates the need for backups and disaster recovery planning.`, 
+		  texte_fr: `L’IaC élimine le besoin de sauvegardes et de plans de reprise après sinistre.`, valeur: "mauvaise" },
+		{ texte_en: `IaC is only suitable for small-scale deployments with limited resources.`, 
+		  texte_fr: `L’IaC convient uniquement aux déploiements de petite taille avec des ressources limitées.`, valeur: "mauvaise" }
+	],
+	explication_en: `IaC simplifies deployment → Correct.  
+		It enables consistency, automation, and easy replication of infrastructure.
+
+Manual provisioning → Incorrect.  
+		IaC aims to eliminate manual steps through automation.
+
+No backups → Incorrect.  
+		Backups are still needed.
+
+Only for small deployments → Incorrect.  
+		IaC scales well for large environments.`,
+	
+	explication_fr: `L’IaC simplifie le déploiement → Correct.  
+		Il assure cohérence, automatisation et reproductibilité de l’infrastructure.
+
+Provisionnement manuel → Incorrect.  
+		L’IaC remplace justement le manuel par du code.
+
+Pas de sauvegardes → Incorrect.  
+		Les sauvegardes restent nécessaires.
+
+Uniquement pour petits déploiements → Incorrect.  
+		L’IaC est adapté à toutes les tailles d’environnements.`
+	},
+	{
+	id: 30,
+	texte_en: `Your application is running on a Google Compute Engine instance and you want to create multiple copies of this virtual machine to handle the traffic. What should you do?`,
+	texte_fr: `Votre application s’exécute sur une instance Google Compute Engine et vous souhaitez créer plusieurs copies de cette machine virtuelle pour gérer le trafic. Que devez-vous faire ?`,
+	reponses: [
+		{ texte_en: `You should create a snapshot of the compute engine instance disk, create a custom image from the snapshot and create instances from this image to handle the traffic.`, 
+		  texte_fr: `Vous devez créer un snapshot du disque de l'instance Compute Engine, créer une image personnalisée à partir de ce snapshot, puis créer des instances à partir de cette image.`, valeur: "correcte" },
+		{ texte_en: `You should create a snapshot of the compute engine instance disk and create instances from this snapshot to handle the traffic.`, 
+		  texte_fr: `Vous devez créer un snapshot du disque de l'instance Compute Engine et créer des instances à partir de ce snapshot pour gérer le trafic.`, valeur: "mauvaise" },
+		{ texte_en: `You should create a snapshot of the compute engine instance disk, create a custom image from the snapshot and create instances from this snapshot to handle the traffic.`, 
+		  texte_fr: `Vous devez créer un snapshot du disque de l'instance Compute Engine, créer une image personnalisée à partir du snapshot, puis créer des instances à partir de ce snapshot pour gérer le trafic.`, valeur: "mauvaise" },
+		{ texte_en: `You cannot do this in GCP.`, 
+		  texte_fr: `Vous ne pouvez pas faire cela dans GCP.`, valeur: "mauvaise" }
+	],
+	explication_en: `Snapshot → Image → New instances → Correct.  
+		This is the proper workflow for replicating instances in GCP.
+
+Create instances directly from snapshot → Incorrect.  
+		You cannot launch an instance directly from a snapshot.
+
+Instances from snapshot again → Incorrect.  
+		Same issue as above.
+
+Not possible in GCP → Incorrect.  
+		GCP supports this perfectly.`,
+	
+	explication_fr: `Snapshot → Image → Nouvelles instances → Correct.  
+		C’est la bonne méthode pour répliquer une instance dans GCP.
+
+Créer des instances depuis un snapshot → Incorrect.  
+		Les snapshots doivent être convertis en image d’abord.
+
+Encore instances depuis snapshot → Incorrect.  
+		Même problème : ce n’est pas supporté directement.
+
+Pas possible dans GCP → Incorrect.  
+		C’est tout à fait faisable dans GCP.`
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Ajoute d'autres questions ici si nécessaire
+];
+
+function melangerTableau(tableau) {
+    for (let i = tableau.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tableau[i], tableau[j]] = [tableau[j], tableau[i]];
+    }
+}
+
+function afficherQuestions() {
+    const form = document.getElementById('quizForm');
+    form.innerHTML = '';
+
+    questions.forEach((q, index) => {
+        const reponsesMelangees = [...q.reponses];
+        melangerTableau(reponsesMelangees);
+
+        const divQuestion = document.createElement('div');
+        divQuestion.className = 'question';
+
+        const grille = document.createElement('div');
+        grille.className = 'grille';
+
+        const blocEn = document.createElement('div');
+        blocEn.className = 'bloc';
+
+        const titreEn = document.createElement('h3');
+        titreEn.textContent = 'English question '+ q.id+' :';
+        blocEn.appendChild(titreEn);
+
+        const texteEn = document.createElement('p');
+        texteEn.textContent = q.texte_en;
+        blocEn.appendChild(texteEn);
+
+        reponsesMelangees.forEach(rep => {
+            const label = document.createElement('label');
+            label.className = 'option';
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.name = 'question' + q.id;
+            input.value = rep.valeur;
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(rep.texte_en));
+            blocEn.appendChild(label);
+        });
+
+        const explicationEn = document.createElement('div');
+        explicationEn.className = 'explication';
+        explicationEn.id = 'explicationEn' + q.id;
+        explicationEn.innerHTML = q.explication_en.replace(/\n/g, '<br>'); // Modification ici
+        blocEn.appendChild(explicationEn);
+
+        const blocFr = document.createElement('div');
+        blocFr.className = 'bloc';
+
+        const titreFr = document.createElement('h3');
+        titreFr.textContent = 'Question '+ q.id +' en français :';
+        blocFr.appendChild(titreFr);
+
+        const texteFr = document.createElement('p');
+        texteFr.textContent = q.texte_fr;
+        blocFr.appendChild(texteFr);
+
+        reponsesMelangees.forEach(rep => {
+            const p = document.createElement('p');
+            p.textContent = rep.texte_fr;
+            blocFr.appendChild(p);
+        });
+
+        const explicationFr = document.createElement('div');
+        explicationFr.className = 'explication';
+        explicationFr.id = 'explicationFr' + q.id;
+        explicationFr.innerHTML = q.explication_fr.replace(/\n/g, '<br>'); // Modification ici
+        blocFr.appendChild(explicationFr);
+
+        grille.appendChild(blocEn);
+        grille.appendChild(blocFr);
+        divQuestion.appendChild(grille);
+        form.appendChild(divQuestion);
+    });
+}
+
+function verifier() {
+    let score = 0;
+    const total = questions.length;
+
+    questions.forEach((q, index) => {
+        const questionDiv = document.querySelectorAll('.question')[index];
+        const inputs = document.querySelectorAll(`input[name=question${q.id}]`);
+
+        let bonneReponseSelectionnee = false;
+        let mauvaiseReponseSelectionnee = false;
+
+        inputs.forEach(input => {
+            if (input.checked) {
+                if (input.value === 'correcte') bonneReponseSelectionnee = true;
+                else if (input.value === 'mauvaise') mauvaiseReponseSelectionnee = true;
+            }
+        });
+
+        const explicationEn = document.getElementById('explicationEn' + q.id);
+        const explicationFr = document.getElementById('explicationFr' + q.id);
+
+        explicationEn.style.display = 'block';
+        explicationFr.style.display = 'block';
+
+        // On enlève d'abord toutes les classes
+        questionDiv.classList.remove('section-mauvaise');
+        inputs.forEach(input => {
+            input.parentElement.classList.remove('bonne-reponse', 'mauvaise-reponse');
+        });
+
+        if (bonneReponseSelectionnee && !mauvaiseReponseSelectionnee) {
+            score++;
+            inputs.forEach(input => {
+                if (input.value === 'correcte') {
+                    input.parentElement.classList.add('bonne-reponse');
+                }
+            });
+        } else {
+            questionDiv.classList.add('section-mauvaise');
+            // Ajout de l'animation shake
+            questionDiv.classList.add('shake');
+            // Suppression de la classe shake après la fin de l'animation
+            questionDiv.addEventListener('animationend', () => {
+                questionDiv.classList.remove('shake');
+            }, { once: true });
+
+            inputs.forEach(input => {
+                if (input.checked && input.value === 'mauvaise') {
+                    input.parentElement.classList.add('mauvaise-reponse');
+                }
+                if (input.value === 'correcte') {
+                    input.parentElement.classList.add('bonne-reponse');
+                }
+            });
+        }
+    });
+
+    document.getElementById('resultat').textContent = `Votre score est ${score} sur ${total}`;
+}
+
+window.onload = afficherQuestions;
+</script>
+
+</body>
+</html>
