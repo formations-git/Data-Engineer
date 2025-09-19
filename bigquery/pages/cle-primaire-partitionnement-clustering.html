@@ -10,13 +10,13 @@
     <script>hljs.highlightAll();</script>
     <style>
         body {
-            font-family: Inter, Roboto, Arial; /* Liste de polices par ordre de priorité */
-            max-width: 980px;                  /* Largeur maximale du contenu pour éviter les lignes trop longues */
-            margin: 28px auto;                 /* Centrage horizontal + espace vertical */
-            padding: 20px;                     /* Espace interne autour du texte */
-            line-height: 1.55;                 /* Hauteur de ligne pour meilleure lisibilité */
-            color: #f1f1f1;                    /* Couleur claire du texte */
-            background: #0b1d3a;               /* Fond bleu foncé de la page */
+            font-family: Inter, Roboto, Arial; 
+            max-width: 980px;                 
+            margin: 28px auto;                
+            padding: 20px;                    
+            line-height: 1.55;                
+            color: #f1f1f1;                   
+            background: #0b1d3a;              
         }
         h1, h2, h3 {
             color: #f8f8f2;
@@ -28,7 +28,7 @@
             overflow-x: auto;
         }
         .hljs {
-            background-color: #033466 !important; /* bleu moins foncé */
+            background-color: #033466 !important; 
             padding: 10px !important;
             border-radius: 4px !important;
             font-size: 14px;
@@ -48,111 +48,297 @@
             margin-bottom: 30px;
         }
         .hint {
-      background: #163d66;            /* Fond bleu-gris plus clair pour les encadrés */
-      border-left: 4px solid #4da6ff; /* Trait bleu à gauche (effet “note”) */
-      padding: 12px;                  /* Espacement interne */
-      margin: 12px 0;                 /* Marges au-dessus et en dessous */
-      border-radius: 6px;             /* Coins arrondis */
-      color: #fff;                    /* Texte blanc */
-    }
+            background: #163d66;            
+            border-left: 4px solid #4da6ff; 
+            padding: 12px;                  
+            margin: 12px 0;                 
+            border-radius: 6px;             
+            color: #fff;                    
+        }
+        .hint2 {
+            background: #166627;            
+            border-left: 4px solid #4dff4d; 
+            padding: 12px;                  
+            margin: 12px 0;                 
+            border-radius: 6px;             
+            color: #fff;                    
+        }
+        .hint3 {
+            background: #023266;            
+            border-left: 4px solid #4da6ff; 
+            padding: 12px;                  
+            margin: 12px 0;                 
+            border-radius: 6px;             
+            color: #fff;                    
+        }
+        table {
+            border-collapse: collapse;
+            margin-top: 16px;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #4da6ff;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #163d66;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
     <h1>Concepts clés BigQuery : Clé primaire, partitionnement et clustering</h1>
 
-    <section class="hint">
-        <h2>Clé primaire dans BigQuery</h2>
-        <p>Dans BigQuery, il n’y a pas de contrainte de clé primaire comme dans les bases de données relationnelles traditionnelles. Cependant, il est judicieux de définir des colonnes comme « clé primaire logique » pour :</p>
+    <section>
+        <h2>1. Clé primaire (Primary Key)</h2>
+        <p>En bases relationnelles classiques (ex : PostgreSQL, MySQL), une clé primaire est un identifiant unique et obligatoire pour chaque ligne.</p>
+        <p><strong>Dans BigQuery :</strong></p>
         <ul>
-            <li>Déduplication (identifier les lignes uniques)</li>
-            <li>Optimisation des jointures</li>
-            <li>Amélioration des performances avec le partitionnement et le clustering</li>
+            <li>BigQuery ne force pas les contraintes d’intégrité comme les clés primaires.</li>
+            <li>Tu peux désigner une colonne comme identifiant logique (par exemple user_id, transaction_id), mais BigQuery n’empêche pas les doublons.</li>
+            <li>C’est à toi (via ETL/ELT ou requêtes SQL) de t’assurer que cette clé reste unique.</li>
         </ul>
+        <div class="hint">
+            👉 Exemple :
+            <pre><code class="sql">
+SELECT user_id, COUNT(*) 
+FROM `projet.dataset.utilisateurs`
+GROUP BY user_id
+HAVING COUNT(*) > 1;
+            </code></pre>
+            → Vérifie si ta "clé primaire" logique (user_id) est bien unique.
+        </div>
+        <section class="hint2">
+        <h3>Comportement BigQuery avec / sans clé primaire</h3>
+        <ul>
+            <li><strong>Avec clé primaire :</strong> unicité logique gérée par toi, pas de gain de performance.</li>
+            <li><strong>Sans clé primaire :</strong> aucun impact performance, mais risque de doublons incohérents.</li>
+        </ul>
+        <p>👉 Conclusion : Clé primaire = contrainte organisationnelle, pas technique.</p>
+        </section>
     </section>
 
-    <section class="hint">
-        <h2>Partitionnement vs clustering</h2>
-        <p><strong>Partitionnement</strong> divise la table en segments basés sur une colonne spécifique (souvent une date ou un timestamp).</p>
+    <section>
+        <h2>2. Clés étrangères (Foreign Keys)</h2>
+        <p>Dans une BD relationnelle, une clé étrangère garantit qu’une valeur existe déjà dans une autre table (référence).</p>
+        <p><strong>Dans BigQuery :</strong></p>
         <ul>
-            <li>Types de partition : par DATE, DATETIME, TIMESTAMP, entier, ou ingestion time (<code>_PARTITIONTIME</code>)</li>
-            <li>Avantages : réduction drastique des coûts, meilleure performance, maintenance facilitée</li>
+            <li>Pas de contrainte automatique de clé étrangère.</li>
+            <li>Tu peux tout de même utiliser la relation en faisant un <code>JOIN</code> entre tables.</li>
+            <li>Tu dois gérer toi-même la cohérence entre tables référencées.</li>
         </ul>
-        <p><strong>Clustering</strong> organise les données à l’intérieur de chaque partition selon les colonnes choisies (jusqu’à 4 colonnes).</p>
+        <div class="hint">
+            👉 Exemple :
+            <pre><code class="sql">
+SELECT u.user_id, u.nom, t.transaction_id
+FROM `projet.dataset.utilisateurs` u
+LEFT JOIN `projet.dataset.transactions` t
+ON u.user_id = t.user_id;
+            </code></pre>
+            Ici <code>transactions.user_id</code> est conceptuellement une clé étrangère vers <code>utilisateurs.user_id</code>.
+        </div>
+        <section class="hint2">
+        <h3>Comportement BigQuery avec / sans clé étrangère</h3>
         <ul>
-            <li>L’ordre des colonnes est important (la première colonne a le plus d’impact)</li>
-            <li>Réorganisation automatique en arrière-plan</li>
+            <li><strong>Avec clé étrangère :</strong> relation logique via JOIN, mais pas d’intégrité garantie, JOIN parfois coûteux.</li>
+            <li><strong>Sans clé étrangère :</strong> pas d’erreur technique, mais risque de données orphelines.</li>
         </ul>
+        <p>👉 Conclusion : Clés étrangères = seulement conceptuelles.</p>
+        </section>
     </section>
 
-    <section class="hint">
-        <h2>Bonnes pratiques</h2>
-
-        <h3>Stratégie de partitionnement</h3>
-        <p>Exemple :</p>
-        <pre><code class="language-sql">CREATE TABLE `project.dataset.sales_data` (
-  transaction_id STRING,
-  customer_id STRING,
-  product_id STRING,
-  transaction_date DATE,
-  amount NUMERIC
-) PARTITION BY transaction_date
-  CLUSTER BY customer_id, product_id;
-        </code></pre>
+    <section>
+        <h2>3. Partitionnement (Partitioning)</h2>
+        <p>Le partitionnement est une méthode pour diviser une table en morceaux logiques (partitions).</p>
+        <p><strong>Dans BigQuery :</strong></p>
         <ul>
-            <li>Utiliser une colonne fréquemment filtrée dans les requêtes</li>
-            <li>Privilégier une colonne de date/timestamp</li>
-            <li>Maximum : 4000 partitions par table</li>
+            <li>Partitionnement par date/temps → avec colonne DATE, DATETIME ou TIMESTAMP.</li>
+            <li>Partitionnement par entier → basé sur une colonne entière.</li>
+            <li>Partitionnement auto ingestion → via <code>_PARTITIONTIME</code>.</li>
         </ul>
-
-        <h3>Stratégie de clustering</h3>
+        <div class="hint">
+            👉 Exemple :
+            <pre><code class="sql">
+CREATE TABLE `projet.dataset.logs` (
+  user_id STRING,
+  event_time TIMESTAMP,
+  action STRING
+)
+PARTITION BY DATE(event_time);
+            </code></pre>
+        </div>
+        <section class="hint2">
+        <h3>Comportement BigQuery avec / sans partitionnement</h3>
         <ul>
-            <li>Colonnes recommandées : status (faible cardinalité, filtrée), customer_id (moyenne, join), product_category (group by), created_date (tri)</li>
-            <li>La première colonne doit être celle le plus souvent filtrée</li>
-            <li>Colonnes suivantes : join/group by/order by</li>
-            <li>Éviter les colonnes très uniques (ex : IDs générés)</li>
+            <li><strong>Avec partitionnement :</strong> seule une partie de la table est scannée → coût réduit, meilleure performance.</li>
+            <li><strong>Sans partitionnement :</strong> BigQuery scanne toute la table → coûteux et lent.</li>
         </ul>
-
-        <h3>Relation avec la clé primaire</h3>
-        <p>Si la clé primaire logique est composite :</p>
-        <pre><code class="language-sql">CREATE TABLE transactions
-  PARTITION BY DATE(transaction_date)
-  CLUSTER BY customer_id;
-        </code></pre>
-    </section class="hint">
-
-    <section class="hint">
-        <h2>Cas d’usage optimaux</h2>
-        <ul>
-            <li><strong>Partitionnement :</strong> filtrage fréquent par date, suppression de données anciennes, réduction de coûts</li>
-            <li><strong>Clustering :</strong> filtrage/jointure/group by sur plusieurs colonnes</li>
-            <li><strong>Combiner les deux :</strong> tables volumineuses (&gt;1GB), filtrage par date ET autre colonne</li>
-        </ul>
+        <p>👉 Conclusion : Partitionnement = optimisation critique sur gros volumes.</p>
+        </section>
     </section>
 
-    <section class="hint">
-        <h2>Monitoring et optimisation</h2>
-        <p>Vérifier le partitionnement :</p>
-        <pre><code class="language-sql">SELECT partition_id, total_rows, total_logical_bytes
-FROM `project.dataset.INFORMATION_SCHEMA.PARTITIONS`
-WHERE table_name = 'your_table';
-        </code></pre>
-        <p>Analyser l’impact du clustering :</p>
-        <pre><code class="language-sql">SELECT creation_time, total_bytes_processed, total_slot_ms
-FROM `project.region.INFORMATION_SCHEMA.JOBS_BY_PROJECT`
-WHERE job_type = 'QUERY' AND statement_type = 'SELECT';
-        </code></pre>
-    </section>
+    <section>
+        <h2>4. Segmentation (Sharding)</h2>
+        <p>Sharding : consiste à diviser une grande table en plusieurs sous-tables plus petites, souvent appelées shards. Avec un suffixe (logs_202309, logs_202310).</p>
+        <p>Dans BigQuery, le sharding traditionnel se faisait via des tables avec suffixe de date, par exemple :logs_202309, logs_202310...</p>
+
+        <div class="hint">
+            👉 Exemple : Tu peux interroger plusieurs shards en une seule requête avec un wildcard :
+            <pre><code class="sql">
+SELECT * 
+FROM `projet.dataset.logs_*`
+WHERE _TABLE_SUFFIX BETWEEN '202309' AND '202310';
+            </code></pre>
+            👉 _TABLE_SUFFIX contient la partie variable du nom du shard.
+        </div>
+        <p>🔹 Historique : </p>
+        <ul><ul>
+            🔹avant 2018, BigQuery recommandait le sharding pour gérer de très gros volumes, mais aujourd’hui, les tables partitionnées et clusterées sont préférées, car elles sont plus simples et optimisées.</li>
+            <li>✅ aujourd’hui : BigQuery recommande  de remplacer le sharding par une table partitionnée (par exemple date) et clusterée sur les colonnes de filtrage fréquentes.</li>
+        </ul></ul>
+
 
     <section class="hint">
-        <h2>Recommandations finales</h2>
+        <p><strong>Bonnes pratiques pour le sharding / segmentation</strong></p>
+            <ul><ul>
+                <li><strong>Limiter le nombre de shards par requête</strong> (< 1 000).</li>
+                <li><strong>Nommer les shards de manière cohérente</strong>, idéalement avec une dimension temporelle (YYYYMMDD).</li>
+                <li><strong>Préférer le partitionnement si possible</strong> pour simplifier la gestion et réduire le coût.</li>
+                <li><strong>Combiner partitionnement + clustering </strong>: tu obtiens l’équivalent d’un sharding automatique + des scans optimisés par filtrage.</li>
+            </ul></ul>
+    </section> 
+
+        <section class="hint2">
+        <h3>Comportement BigQuery avec / sans segmentation</h3>
         <ul>
-            <li>Commencer par le partitionnement sur les colonnes de date</li>
-            <li>Ajouter le clustering sur les colonnes fréquemment filtrées</li>
-            <li>Tester et mesurer l’impact sur les requêtes</li>
-            <li>Éviter le sur-clustering</li>
-            <li>Documenter la stratégie pour l’équipe</li>
+            <li><strong>Avec segmentation :</strong> découpe manuelle possible, mais lourde à gérer, moins efficace que le partitionnement.</li>
+            <li><strong>Sans segmentation :</strong></li> 
+                <ul>
+                    <li>Table énorme, difficile à manipuler si pas partitionnée.</li>
+                    <li><strong>Scan optimisé par filtrage de shard:</strong></li>
+                    <ul>
+                        <li>BigQuery ne scanne que les shards nécessaires si tu utilises _TABLE_SUFFIX dans le filtre.</li>
+                        <li>Cela réduit considérablement le volume de données lues et donc le coût.</li>
+                    </ul>
+                    <li><strong>Comportement de performance:</strong></li>
+                    <ul>
+                        <li>Chaque shard est traité comme une table indépendante.</li>
+                        <li>Trop de shards peuvent dégrader les performances, car BigQuery crée <strong>un plan de requête pour chaque shard</strong> et les agrège ensuite.</li>
+                        <li>Google recommande de <strong>ne pas dépasser 1 000 shards par requête.</strong></li>
+                    </ul>
+                </ul>
         </ul>
+        <p>👉 Conclusion : Segmentation = solution héritée, à éviter sauf cas précis.</p>
+        </section>
     </section>
 
+
+        <h2>5. Clustering</h2>
+        <p>Le clustering regroupe physiquement les lignes selon les colonnes choisies (user_id, region...).</p>
+        <p>Le clustering permet à BigQuery de réorganiser physiquement les données dans les tables en fonction de certaines colonnes pour accélérer les requêtes filtrant sur ces colonnes.</p>
+        <h3>Principes pour choisir les champs :</h3>
+        <ul><ul>
+            <li><strong>Choisir des colonnes souvent utilisées dans les filtres (WHERE) ou JOIN).</strong></li>
+            <li><strong>Colonnes avec cardinalité moyenne :</strong></li>
+            <ul>
+                <li><strong>Trop faible → </strong>peu d’efficacité (ex : booléen ou 0/1).</li>
+                <li><strong>Trop élevé → </strong>BigQuery ne pourra pas regrouper efficacement (ex : ID unique).</li>
+            </ul>
+            <li><strong>Colonnes dans l’ordre d’usage :</strong></li>
+            <ul>
+                <li>Le premier champ du clustering est celui sur lequel tu fais le plus souvent des filtres.</li>
+                <li>Ensuite, tu peux ajouter des colonnes secondaires si tu filtres souvent sur plusieurs colonnes simultanément.</li>
+            </ul>
+
+            <li><strong>Nombre de colonnes dans un cluster :</strong></li>
+            <ul>
+                <li><strong>Maximum : 4 colonnes par table.</strong></li>
+                <li>L’ordre des colonnes dans le clustering <strong>importe</strong>, car BigQuery trie les données en fonction de cet ordre.</li>
+            </ul>
+
+            <li><strong>Nombre de clusters par table :</strong></li>
+            <ul>
+                <li><strong>Une seule définition de clustering par table.</strong></li>
+                <li>Autrement dit, tu définis <strong>jusqu’à 4 colonnes pour un seul cluster</strong>, mais tu ne peux pas créer plusieurs clusters distincts sur la même table.</li>
+            </ul>
+            <li><strong>Notes pratiques:</strong></li>
+                <ul>
+                    <li>Le clustering est <strong>compatible avec le partitionnement</strong>, et c’est souvent recommandé de partitionner d’abord (ex. par date) puis de clusterer sur les colonnes les plus filtrées.</li>
+                    <li>Si tu as plus de colonnes filtrées fréquemment, tu dois <strong>prioriser les 4 plus importantes</strong> pour le clustering.</li>
+                </ul>
+
+                <section class="hint3">
+            <ul><ul>
+                <li><strong>Exemple :</strong></li>
+                <p>Si tu as une table de transactions :</p>
+                <ul>
+                    <li><strong>event_date → </strong>souvent filtrée dans WHERE pour des plages de temps</li>
+                    <li><strong>user_id → </strong>l'id souvent utilisée pour la jointure</li>
+                    <li><strong>region → </strong>souvent utilisée pour des rapports régionaux</li>
+                </ul>   
+            </ul></ul>
+        
+            <div class="hint">
+                👉 Exemple :
+                <pre><code class="sql">
+                    CREATE TABLE `projet.dataset.transactions` (
+                    transaction_id STRING,
+                    user_id STRING,
+                    region STRING,
+                    amount FLOAT64,
+                    event_date DATE
+                    )
+                    PARTITION BY event_date
+                    CLUSTER BY user_id, region;
+                </code></pre>
+            </div>
+        <p>💡 Astuce : Le clustering est plus efficace sur des tables très volumineuses et surtout si les requêtes filtrent sur ces colonnes.</p>
+
+        <section class="hint2">
+        <h3>Comportement BigQuery avec / sans clustering</h3>
+        <ul>
+            <li><strong>Avec clustering :</strong> BigQuery lit moins de blocs de données, requêtes beaucoup plus rapides.</li>
+            <li><strong>Sans clustering :</strong> scans complets même avec filtres → pertes de performance.</li>
+        </ul>
+        <p>👉 Conclusion : Clustering = optimisation secondaire, utile sur très grands volumes.</p>
+        </section>
+
+
+    <section>
+        <h2>✅ Résumé visuel</h2>
+        <table>
+            <tr>
+                <th>Concept</th>
+                <th>Dans une BD classique</th>
+                <th>Dans BigQuery</th>
+            </tr>
+            <tr>
+                <td>Clé primaire</td>
+                <td>Unicité garantie</td>
+                <td>Pas de contrainte, à gérer soi-même</td>
+            </tr>
+            <tr>
+                <td>Clé étrangère</td>
+                <td>Référence forcée entre tables</td>
+                <td>Pas de contrainte, relation logique via JOIN</td>
+            </tr>
+            <tr>
+                <td>Partitionnement</td>
+                <td>Découpe physique de la table</td>
+                <td>Natif : par date, entier, ingestion</td>
+            </tr>
+            <tr>
+                <td>Segmentation</td>
+                <td>Peu courant (sauf sharding)</td>
+                <td>Tables multiples avec suffixes (<code>logs_202301</code>)</td>
+            </tr>
+            <tr>
+                <td>Clustering</td>
+                <td>Rare en OLTP, indexation</td>
+                <td>Regroupe physiquement selon colonnes pour optimiser</td>
+            </tr>
+        </table>
+    </section>
 </body>
 </html>
