@@ -10,11 +10,13 @@
     <script>hljs.highlightAll();</script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-            background-color: #001f3f; /* bleu foncé */
-            color: #cccccc;
+            font-family: Inter, Roboto, Arial; /* Liste de polices par ordre de priorité */
+            max-width: 980px;                  /* Largeur maximale du contenu pour éviter les lignes trop longues */
+            margin: 28px auto;                 /* Centrage horizontal + espace vertical */
+            padding: 20px;                     /* Espace interne autour du texte */
+            line-height: 1.55;                 /* Hauteur de ligne pour meilleure lisibilité */
+            color: #f1f1f1;                    /* Couleur claire du texte */
+            background: #0b1d3a;               /* Fond bleu foncé de la page */
         }
         h1, h2, h3 {
             color: #f8f8f2;
@@ -45,12 +47,20 @@
         section {
             margin-bottom: 30px;
         }
+        .hint {
+      background: #163d66;            /* Fond bleu-gris plus clair pour les encadrés */
+      border-left: 4px solid #4da6ff; /* Trait bleu à gauche (effet “note”) */
+      padding: 12px;                  /* Espacement interne */
+      margin: 12px 0;                 /* Marges au-dessus et en dessous */
+      border-radius: 6px;             /* Coins arrondis */
+      color: #fff;                    /* Texte blanc */
+    }
     </style>
 </head>
 <body>
     <h1>Concepts clés BigQuery : Clé primaire, partitionnement et clustering</h1>
 
-    <section>
+    <section class="hint">
         <h2>Clé primaire dans BigQuery</h2>
         <p>Dans BigQuery, il n’y a pas de contrainte de clé primaire comme dans les bases de données relationnelles traditionnelles. Cependant, il est judicieux de définir des colonnes comme « clé primaire logique » pour :</p>
         <ul>
@@ -60,7 +70,7 @@
         </ul>
     </section>
 
-    <section>
+    <section class="hint">
         <h2>Partitionnement vs clustering</h2>
         <p><strong>Partitionnement</strong> divise la table en segments basés sur une colonne spécifique (souvent une date ou un timestamp).</p>
         <ul>
@@ -74,7 +84,7 @@
         </ul>
     </section>
 
-    <section>
+    <section class="hint">
         <h2>Bonnes pratiques</h2>
 
         <h3>Stratégie de partitionnement</h3>
@@ -108,9 +118,9 @@
   PARTITION BY DATE(transaction_date)
   CLUSTER BY customer_id;
         </code></pre>
-    </section>
+    </section class="hint">
 
-    <section>
+    <section class="hint">
         <h2>Cas d’usage optimaux</h2>
         <ul>
             <li><strong>Partitionnement :</strong> filtrage fréquent par date, suppression de données anciennes, réduction de coûts</li>
@@ -119,7 +129,7 @@
         </ul>
     </section>
 
-    <section>
+    <section class="hint">
         <h2>Monitoring et optimisation</h2>
         <p>Vérifier le partitionnement :</p>
         <pre><code class="language-sql">SELECT partition_id, total_rows, total_logical_bytes
@@ -133,7 +143,7 @@ WHERE job_type = 'QUERY' AND statement_type = 'SELECT';
         </code></pre>
     </section>
 
-    <section>
+    <section class="hint">
         <h2>Recommandations finales</h2>
         <ul>
             <li>Commencer par le partitionnement sur les colonnes de date</li>

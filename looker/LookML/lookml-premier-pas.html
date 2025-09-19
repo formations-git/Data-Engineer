@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LookML — Tutoriel pas-à-pas (ordre : VIEWS → EXPLORES → MODEL)</title>
+<style>
+    body {
+      font-family: Inter, Roboto, Arial; /* Liste de polices par ordre de priorité */
+      max-width: 980px;                  /* Largeur maximale du contenu pour éviter les lignes trop longues */
+      margin: 28px auto;                 /* Centrage horizontal + espace vertical */
+      padding: 20px;                     /* Espace interne autour du texte */
+      line-height: 1.55;                 /* Hauteur de ligne pour meilleure lisibilité */
+      color: #f1f1f1;                    /* Couleur claire du texte */
+      background: #0b1d3a;               /* Fond bleu foncé de la page */
+    }
+
+    h1, h2 {
+      color: #ccdb45; /* Titres en bleu clair pour contraster avec le fond sombre */
+    }
+
+    pre {
+      background: #1c2a40;   /* Fond moins sombre pour les blocs de code */
+      color: #e6eef8;        /* Texte clair (gris bleuté) pour bonne lisibilité */
+      padding: 16px;         /* Espace interne pour aérer le code */
+      border-radius: 8px;    /* Coins arrondis (effet moderne) */
+      overflow: auto;        /* Scroll si le code est trop long */
+      white-space: pre-wrap; /* Permet le retour à la ligne automatique */
+    }
+
+    code {
+      font-family: monospace; /* Police type console pour le code */
+    }
+
+    .file {
+      margin-bottom: 18px; /* Espace entre chaque bloc fichier */
+    }
+
+    .meta {
+      font-size: 0.95rem; /* Taille un peu réduite pour les notes de contexte */
+      color: #ddd;        /* Texte gris clair */
+    }
+
+    .hint {
+      background: #163d66;            /* Fond bleu-gris plus clair pour les encadrés */
+      border-left: 4px solid #4da6ff; /* Trait bleu à gauche (effet “note”) */
+      padding: 12px;                  /* Espacement interne */
+      margin: 12px 0;                 /* Marges au-dessus et en dessous */
+      border-radius: 6px;             /* Coins arrondis */
+      color: #fff;                    /* Texte blanc */
+    }
+
+    .steps {
+      margin: 12px 0;      /* Marges extérieures */
+      padding-left: 18px;  /* Décalage pour bien aligner la liste numérotée */
+    }
+
+    .actions {
+      margin-top: 18px; /* Espace avant une zone d’actions (boutons, liens) */
+    }
+  </style>
+</head>
+<body>
+  <h1>LookML — Tutoriel pas-à-pas (ordre requis)</h1>
+  <p class="meta">Ce document fournit les fichiers LookML et les étapes détaillées pour créer un petit modèle relationnel <em>dans l'ordre strict</em> : <strong>VIEWS → EXPLORES → MODEL</strong>. Pourquoi cet ordre ? Parce que :
+  <ul>
+    <li>Une <strong>explore</strong> référence des <strong>views</strong> — elle ne peut pas exister utilement sans elles.</li>
+    <li>Le fichier <strong>.model.lkml</strong> rassemble/active des explores pour une connexion donnée — il vient donc après les explores.</li>
+  </ul>
+  </p>
+
+  <div class="hint">
+    Résumé rapide de l'ordre de travail :
+    <ol>
+      <li>Créer les <code>.view.lkml</code> (définissent dimensions & mesures).</li>
+      <li>Créer les <code>.explore.lkml</code> (définissent joins & comportement d'exploration, utilisent les views existantes).</li>
+      <li>Créer le <code>.model.lkml</code> (déclare la connexion et inclut les explores disponibles).</li>
+      <li>Valider, tester, committer et déployer.</li>
+    </ol>
+  </div>
+
+  <h2>Étape 0 — Préparation avant de coder</h2>
+  <ul class="steps">
+    <li>Rassemble : nom de la connexion SQL (ex. <code>ma_connection_sql</code>), schéma, et liste des tables (ici : <code>users</code>, <code>orders</code>, <code>products</code>).</li>
+    <li>Crée un projet LookML dans Looker (Develop → Manage LookML Projects → New Project).</li>
+    <li>Active Git (si souhaité), crée une branche de développement.</li>
+  </ul>
+
+  <h2>Étape 1 — Créer les <code>.view.lkml</code> (les bases)</h2>
+  <p class="meta">Crée un fichier par table. Chaque vue doit au minimum : <code>view: name</code>, <code>sql_table_name</code>, une clé primaire (dimension primary_key), dimensions et mesures essentielles.</p>
+
+  <div class="file">
+    <h3>users.view.lkml</h3>
+    <pre><code>view: users {
+  sql_table_name: schema.users ;;
+
+  dimension: id { primary_key: yes type: number sql: ${TABLE}.id ;; }
+  dimension: name { type: string sql: ${TABLE}.name ;; }
+  dimension: email { type: string sql: ${TABLE}.email ;; }
+
+  measure: user_count { type: count sql: ${TABLE}.id ;; }
+}
+</code></pre>
+  </div>
+
+  <div class="file">
+    <h3>orders.view.lkml</h3>
+    <pre><code>view: orders {
+  sql_table_name: schema.orders ;;
+
+  dimension: id { primary_key: yes type: number sql: ${TABLE}.id ;; }
+  dimension: user_id { type: number sql: ${TABLE}.user_id ;; }
+  dimension: product_id { type: number sql: ${TABLE}.product_id ;; }
+  dimension: created_date { type: date sql: ${TABLE}.created_at ;; }
+  dimension: amount { type: number sql: ${TABLE}.amount ;; }
+
+  measure: total_orders { type: count drill_fields: [id, user_id] }
+  measure: total_revenue { type: sum sql: ${TABLE}.amount ;; value_format_name: "usd" }
+}
+</code></pre>
+  </div>
+
+  <div class="file">
+    <h3>products.view.lkml</h3>
+    <pre><code>view: products {
+  sql_table_name: schema.products ;;
+
+  dimension: id { primary_key: yes type: number sql: ${TABLE}.id ;; }
+  dimension: name { type: string sql: ${TABLE}.name ;; }
+  dimension: category { type: string sql: ${TABLE}.category ;; }
+  measure: product_count { type: count_distinct sql: ${TABLE}.id ;; }
+}
+</code></pre>
+  </div>
+
+  <h2>Étape 2 — Créer les <code>.explore.lkml</code> (après les views)</h2>
+  <p class="meta">Les explores utilisent les views existantes. Crée un fichier par exploration principale (ou place-les dans le model) — mais ici on les met dans des fichiers séparés pour respecter l'ordre logique.</p>
+
+  <div class="file">
+    <h3>users.explore.lkml</h3>
+    <pre><code>explore: users {
+  from: users
+  description: "Explore des utilisateurs avec leurs commandes"
+
+  join: orders {
+    type: left_outer
+    sql_on: ${orders.user_id} = ${users.id} ;;
+    relationship: one_to_many
+  }
+}
+</code></pre>
+  </div>
+
+  <div class="file">
+    <h3>orders.explore.lkml</h3>
+    <pre><code>explore: orders {
+  from: orders
+  description: "Explore des commandes avec info produit et utilisateur"
+
+  join: users {
+    type: left_outer
+    sql_on: ${orders.user_id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+
+  join: products {
+    type: left_outer
+    sql_on: ${orders.product_id} = ${products.id} ;;
+    relationship: many_to_one
+  }
+}
+</code></pre>
+  </div>
+
+  <h2>Étape 3 — Créer le <code>.model.lkml</code> (après avoir créé les explores)</h2>
+  <p class="meta">Le model active les explores pour une connexion. Il doit contenir la <code>connection</code> et inclure les fichiers de views/explores.</p>
+
+  <div class="file">
+    <h3>mymodel.model.lkml</h3>
+    <pre><code>connection: "ma_connection_sql"
+
+include: "*.view.lkml"
+include: "*.explore.lkml"
+
+# (Optionnel) tu peux redéclarer / documenter ici si besoin
+explore: users {}
+explore: orders {}
+</code></pre>
+  </div>
+
+  <h2>Étape 4 — Valider et tester</h2>
+  <ol class="steps">
+    <li>Commit & push ta branche Git (si activé).</li>
+    <li>Ouvre le LookML Validator (Looker le lancera automatiquement lors du commit) et corrige les erreurs.</li>
+    <li>Teste chaque explore dans l'Explorateur : exécute des requêtes simples (dimensions, mesures, filtres de date).</li>
+    <li>Vérifie la SQL générée (SQL Runner) pour t'assurer que les joins et filtres produisent la bonne requête.</li>
+  </ol>
+
+  <h2>Bonnes pratiques & pièges courants</h2>
+  <ul class="steps">
+    <li>Déclare toujours une <strong>primary_key</strong> quand possible ; cela aide Looker pour les jointures et le caching.</li>
+    <li>Utilise <code>relationship</code> (one_to_many / many_to_one) pour améliorer les performances et la précision des agrégations.</li>
+    <li>Test en prod: commence par petites requêtes pour éviter d'exécuter des scans lourds.</li>
+    <li>Documente dimensions/measures avec <code>description</code> pour tes utilisateurs.</li>
+    <li>Garde les vues focalisées sur la table source ; les calculs lourds peuvent aller soit dans la base (vues matérialisées) soit comme derived_table dans LookML si nécessaire.</li>
+  </ul>
+</body>
+</html>
