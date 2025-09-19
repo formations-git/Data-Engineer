@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
   <title>LookML — Tutoriel pas-à-pas (ordre : VIEWS → EXPLORES → MODEL)</title>
 <style>
     body {
@@ -16,7 +21,7 @@
     }
 
     h1, h2 {
-      color: #ccdb45; /* Titres en bleu clair pour contraster avec le fond sombre */
+      color: #fafcea; /* Titres en bleu clair pour contraster avec le fond sombre */
     }
 
     pre {
@@ -42,6 +47,15 @@
     }
 
     .hint {
+      background: #274702;            /* Fond bleu-gris plus clair pour les encadrés */
+      border-left: 4px solid #4dff6b; /* Trait bleu à gauche (effet “note”) */
+      padding: 12px;                  /* Espacement interne */
+      margin: 12px 0;                 /* Marges au-dessus et en dessous */
+      border-radius: 6px;             /* Coins arrondis */
+      color: #fff;                    /* Texte blanc */
+    }
+
+    .hint2 {
       background: #163d66;            /* Fond bleu-gris plus clair pour les encadrés */
       border-left: 4px solid #4da6ff; /* Trait bleu à gauche (effet “note”) */
       padding: 12px;                  /* Espacement interne */
@@ -49,6 +63,7 @@
       border-radius: 6px;             /* Coins arrondis */
       color: #fff;                    /* Texte blanc */
     }
+
 
     .steps {
       margin: 12px 0;      /* Marges extérieures */
@@ -79,13 +94,16 @@
     </ol>
   </div>
 
+<section class="hint2">
   <h2>Étape 0 — Préparation avant de coder</h2>
   <ul class="steps">
     <li>Rassemble : nom de la connexion SQL (ex. <code>ma_connection_sql</code>), schéma, et liste des tables (ici : <code>users</code>, <code>orders</code>, <code>products</code>).</li>
     <li>Crée un projet LookML dans Looker (Develop → Manage LookML Projects → New Project).</li>
     <li>Active Git (si souhaité), crée une branche de développement.</li>
   </ul>
+</section>
 
+<section class="hint2">
   <h2>Étape 1 — Créer les <code>.view.lkml</code> (les bases)</h2>
   <p class="meta">Crée un fichier par table. Chaque vue doit au minimum : <code>view: name</code>, <code>sql_table_name</code>, une clé primaire (dimension primary_key), dimensions et mesures essentielles.</p>
 
@@ -132,7 +150,9 @@
 }
 </code></pre>
   </div>
+</section>
 
+<section class="hint2">
   <h2>Étape 2 — Créer les <code>.explore.lkml</code> (après les views)</h2>
   <p class="meta">Les explores utilisent les views existantes. Crée un fichier par exploration principale (ou place-les dans le model) — mais ici on les met dans des fichiers séparés pour respecter l'ordre logique.</p>
 
@@ -171,7 +191,9 @@
 }
 </code></pre>
   </div>
+</section>
 
+<section class="hint2">
   <h2>Étape 3 — Créer le <code>.model.lkml</code> (après avoir créé les explores)</h2>
   <p class="meta">Le model active les explores pour une connexion. Il doit contenir la <code>connection</code> et inclure les fichiers de views/explores.</p>
 
@@ -187,7 +209,9 @@ explore: users {}
 explore: orders {}
 </code></pre>
   </div>
+</section>
 
+<section class="hint2">
   <h2>Étape 4 — Valider et tester</h2>
   <ol class="steps">
     <li>Commit & push ta branche Git (si activé).</li>
@@ -204,5 +228,7 @@ explore: orders {}
     <li>Documente dimensions/measures avec <code>description</code> pour tes utilisateurs.</li>
     <li>Garde les vues focalisées sur la table source ; les calculs lourds peuvent aller soit dans la base (vues matérialisées) soit comme derived_table dans LookML si nécessaire.</li>
   </ul>
+</section>
+
 </body>
 </html>
