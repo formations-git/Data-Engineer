@@ -233,8 +233,7 @@ WHERE _TABLE_SUFFIX BETWEEN '202309' AND '202310';
         </section>
     </section>
 
-
-        <h2>5. Clustering</h2>
+    <h2>5. Clustering</h2>
         <p>Le clustering regroupe physiquement les lignes selon les colonnes choisies (user_id, region...).</p>
         <p>Le clustering permet à BigQuery de réorganiser physiquement les données dans les tables en fonction de certaines colonnes pour accélérer les requêtes filtrant sur ces colonnes.</p>
         <h3>Principes pour choisir les champs :</h3>
@@ -268,7 +267,7 @@ WHERE _TABLE_SUFFIX BETWEEN '202309' AND '202310';
                     <li>Si tu as plus de colonnes filtrées fréquemment, tu dois <strong>prioriser les 4 plus importantes</strong> pour le clustering.</li>
                 </ul>
 
-                <section class="hint3">
+        <section class="hint3">
             <ul><ul>
                 <li><strong>Exemple :</strong></li>
                 <p>Si tu as une table de transactions :</p>
@@ -293,52 +292,136 @@ WHERE _TABLE_SUFFIX BETWEEN '202309' AND '202310';
                     CLUSTER BY user_id, region;
                 </code></pre>
             </div>
-        <p>💡 Astuce : Le clustering est plus efficace sur des tables très volumineuses et surtout si les requêtes filtrent sur ces colonnes.</p>
-
+            <p>💡 Astuce : Le clustering est plus efficace sur des tables très volumineuses et surtout si les requêtes filtrent sur ces colonnes.</p>
+        </section>
         <section class="hint2">
-        <h3>Comportement BigQuery avec / sans clustering</h3>
-        <ul>
-            <li><strong>Avec clustering :</strong> BigQuery lit moins de blocs de données, requêtes beaucoup plus rapides.</li>
-            <li><strong>Sans clustering :</strong> scans complets même avec filtres → pertes de performance.</li>
-        </ul>
-        <p>👉 Conclusion : Clustering = optimisation secondaire, utile sur très grands volumes.</p>
+            <h3>Comportement BigQuery avec / sans clustering</h3>
+            <ul>
+                <li><strong>Avec clustering :</strong> BigQuery lit moins de blocs de données, requêtes beaucoup plus rapides.</li>
+                <li><strong>Sans clustering :</strong> scans complets même avec filtres → pertes de performance.</li>
+            </ul>
+            <p>👉 Conclusion : Clustering = optimisation secondaire, utile sur très grands volumes.</p>
         </section>
 
+        <section>
+                <h2>✅ Résumé visuel</h2>
+                <table>
+                    <tr>
+                        <th>Concept</th>
+                        <th>Dans une BD classique</th>
+                        <th>Dans BigQuery</th>
+                    </tr>
+                    <tr>
+                        <td>Clé primaire</td>
+                        <td>Unicité garantie</td>
+                        <td>Pas de contrainte, à gérer soi-même</td>
+                    </tr>
+                    <tr>
+                        <td>Clé étrangère</td>
+                        <td>Référence forcée entre tables</td>
+                        <td>Pas de contrainte, relation logique via JOIN</td>
+                    </tr>
+                    <tr>
+                        <td>Partitionnement</td>
+                        <td>Découpe physique de la table</td>
+                        <td>Natif : par date, entier, ingestion</td>
+                    </tr>
+                    <tr>
+                        <td>Segmentation</td>
+                        <td>Peu courant (sauf sharding)</td>
+                        <td>Tables multiples avec suffixes (<code>logs_202301</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>Clustering</td>
+                        <td>Rare en OLTP, indexation</td>
+                        <td>Regroupe physiquement selon colonnes pour optimiser</td>
+                    </tr>
+                </table>
+            </section>
+        <section>
+ 
+            <section>
+    <h2>6. Exemple détaillé : Sharding, Partitionnement et Clustering pour un distributeur</h2>
 
-    <section>
-        <h2>✅ Résumé visuel</h2>
+    <section class="hint">
+        <h3>1️⃣ Sharding</h3>
+        <p><strong>Définition et rôle :</strong> Le sharding consiste à séparer physiquement les données en plusieurs ensembles indépendants, souvent pour des raisons d’isolation ou de distribution géographique.</p>
+        <p><strong>Exemple pour un distributeur :</strong></p>
+        <ul>
+            <li>Créer un shard par pays : <code>sales_US</code>, <code>sales_FR</code>, <code>sales_DE</code>, etc.</li>
+            <li>Permet d’isoler les données et de réduire la latence sur les requêtes par pays.</li>
+            <li>Avantage : chaque shard peut être géré et sécurisé indépendamment.</li>
+        </ul>
+        <p>⚠️ Limitation : le sharding ne suffit pas pour gérer des milliards de lignes dans un même pays. À l’intérieur d’un shard, il faut des mécanismes pour optimiser les requêtes massives.</p>
+    </section>
+
+    <section class="hint">
+        <h3>2️⃣ Partitionnement (BigQuery)</h3>
+        <p><strong>Définition :</strong> Le partitionnement divise une table logiquement en segments basés sur une colonne, généralement pour faciliter les scans et optimiser les coûts.</p>
+        <p><strong>Recommandations pour une table de ventes :</strong></p>
+        <ul>
+            <li><strong>Partitionnement par date :</strong>
+                <ul>
+                    <li>La colonne <code>sale_date</code> est idéale pour les tables de transactions.</li>
+                    <li>Type : <code>DAY</code> (le plus courant), mais <code>MONTH</code> ou <code>YEAR</code> possible selon le volume.</li>
+                    <li>Avantages : scan uniquement les partitions nécessaires → réduction du coût et du temps ; gestion plus simple des données anciennes (archivage / suppression).</li>
+                </ul>
+            </li>
+            <li><strong>Partitionnement ingestion time :</strong> optionnel si les données sont ingérées régulièrement et que <code>sale_date</code> n’est pas fiable. BigQuery crée automatiquement des partitions par date d’ingestion.</li>
+        </ul>
+    </section>
+
+    <section class="hint">
+        <h3>3️⃣ Clustering (BigQuery)</h3>
+        <p><strong>Définition :</strong> Le clustering trie physiquement les données à l’intérieur d’une partition selon des colonnes fréquemment utilisées dans les filtres ou jointures.</p>
+        <p><strong>Recommandations pour une table de ventes :</strong></p>
+        <ul>
+            <li>Colonnes fréquentes pour filtrer : <code>product_id</code>, <code>store_id</code> ou <code>region_id</code>, <code>customer_id</code> si analyses clients fréquentes.</li>
+        </ul>
+        <p><strong>Exemple BigQuery :</strong></p>
+        <pre><code class="sql">
+CREATE TABLE sales
+PARTITION BY DATE(sale_date)
+CLUSTER BY product_id, store_id
+AS SELECT * FROM ...
+        </code></pre>
+        <p>Avantages : les scans sont beaucoup plus efficaces sur les colonnes filtrées ; moins de coût de requête car BigQuery peut sauter les blocs non pertinents.</p>
+    </section>
+
+    <section class="hint2">
+        <h3>4️⃣ Stratégie globale pour des milliards de lignes</h3>
         <table>
             <tr>
-                <th>Concept</th>
-                <th>Dans une BD classique</th>
-                <th>Dans BigQuery</th>
+                <th>Niveau</th>
+                <th>Technique</th>
+                <th>Exemple / choix</th>
+                <th>Commentaire</th>
             </tr>
             <tr>
-                <td>Clé primaire</td>
-                <td>Unicité garantie</td>
-                <td>Pas de contrainte, à gérer soi-même</td>
+                <td>Global</td>
+                <td>Sharding</td>
+                <td>Par pays</td>
+                <td>Isolation des données, conformité locale (RGPD, etc.)</td>
             </tr>
             <tr>
-                <td>Clé étrangère</td>
-                <td>Référence forcée entre tables</td>
-                <td>Pas de contrainte, relation logique via JOIN</td>
-            </tr>
-            <tr>
+                <td>Par shard</td>
                 <td>Partitionnement</td>
-                <td>Découpe physique de la table</td>
-                <td>Natif : par date, entier, ingestion</td>
+                <td>Par <code>sale_date</code> (DAY)</td>
+                <td>Optimise les scans sur les plages de dates</td>
             </tr>
             <tr>
-                <td>Segmentation</td>
-                <td>Peu courant (sauf sharding)</td>
-                <td>Tables multiples avec suffixes (<code>logs_202301</code>)</td>
-            </tr>
-            <tr>
+                <td>Par partition</td>
                 <td>Clustering</td>
-                <td>Rare en OLTP, indexation</td>
-                <td>Regroupe physiquement selon colonnes pour optimiser</td>
+                <td><code>product_id, store_id</code></td>
+                <td>Optimise les filtres et jointures fréquentes</td>
             </tr>
         </table>
+        <p>💡 Astuce : tu peux combiner le partitionnement et le clustering dans BigQuery. Le partitionnement réduit le volume global scanné, et le clustering accélère les scans à l’intérieur de la partition.</p>
     </section>
+
+</section>
+
+                
+
 </body>
 </html>
