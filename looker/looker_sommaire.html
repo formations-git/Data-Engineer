@@ -1,0 +1,101 @@
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formation GCP</title>
+  <style>
+    /* ===========================
+       Variables CSS globales
+       =========================== */
+    :root {
+      --bg: #0f1724;         /* couleur de fond principale */
+      --card: #0b1220;       /* couleur des cartes / sections */
+      --accent: #06b6d4;     /* couleur d'accent (titre) */
+      --hover-bg: #06b6d4;   /* fond couleur accent au survol */
+      --hover-text: #FFD700; /* texte jaune au survol */
+      --muted: #94a3b8;      /* couleur secondaire / texte atténué */
+      --glass: rgba(255,255,255,0.03); /* effet verre */
+    }
+
+    /* ===========================
+       Styles globaux du corps
+       =========================== */
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg, #071126 0%, #071933 100%);
+      color: #ffffff;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* centre horizontalement tout le contenu */
+    }
+
+    /* ===========================
+       Titre principal
+       =========================== */
+    h1 {
+      font-size: 28px;
+      margin-bottom: 24px;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    /* ===========================
+       Menu de navigation
+       =========================== */
+    nav ul {
+      list-style: none;       /* supprime les puces */
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      max-width: 600px;       /* limite maximale du menu */
+    }
+
+    nav li {
+      margin: 12px 0;         /* espace vertical entre les cartes */
+    }
+
+    /* ===========================
+       Liens de navigation (cartes)
+       =========================== */
+    nav a {
+      display: block;
+      text-align: center;     /* centre le texte dans la carte */
+      background: var(--card);/* fond sombre */
+      padding: 16px 32px;     /* padding augmenté pour élargir la carte */
+      border-radius: 12px;    /* coins arrondis */
+      color: #ffffff;         /* texte blanc */
+      font-size: 16px;
+      text-decoration: none;  /* supprime le soulignement */
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6); /* ombre portée */
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+      width: 100%;            /* carte prend toute la largeur disponible */
+      box-sizing: border-box; /* inclut padding dans la largeur */
+    }
+
+    /* ===========================
+       Effet au survol des cartes
+       =========================== */
+    nav a:hover {
+      background: var(--hover-bg); /* fond change au survol */
+      color: var(--hover-text);    /* texte devient jaune */
+      transform: translateY(-2px); /* léger déplacement vers le haut */
+    }
+  </style>
+</head>
+<body>
+  <!-- Titre principal de la page -->
+  <h1>Bienvenue sur la formation GCP</h1>
+
+  <!-- Menu de navigation -->
+  <nav>
+    <ul>
+      <li><a href="lookml/lookml-premier-pas.html">LookML — Tutoriel pas-à-pas (ordre requis)</a></li>
+      <li><a href="pages/compute-engine.html">Compute Engine</a></li>
+      <li><a href="pages/cloud-storage.html">Cloud Storage</a></li>
+    </ul>
+  </nav>
+</body>
+</html>
