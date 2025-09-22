@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Guide — Projet LookML sur BigQuery</title>
+    <!-- Intégration du style et script Highlight.js avec thème foncé -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        body {
+            font-family: Inter, Roboto, Arial;
+            max-width: 980px;
+            margin: 28px auto;
+            padding: 20px;
+            line-height: 1.55;
+            color: #f1f1f1;
+            background: #0b1d3a;
+        }
+        h1, h2 {
+            color: #f8f8f2;
+        }
+        pre {
+            background-color: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        .hljs {
+            background-color: #033466 !important;
+            padding: 10px !important;
+            border-radius: 4px !important;
+        }
+        code {
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            color: #f8f8f2;
+        }
+        p, li {
+            color: #cccccc;
+        }
+        .hint {
+            background: #163d66;
+            border-left: 4px solid #4da6ff;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 6px;
+            color: #fff;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        ul { margin-left: 1.25em; }
+        .small { font-size: 90%; color: #bfcbdc; }
+    </style>
+</head>
+<body>
+    <h1>Guide — Projet LookML avec BigQuery</h1>
+    <p class="small">
+        Ce guide fournit toutes les étapes nécessaires pour structurer, développer, tester et déployer un projet LookML fonctionnant sur BigQuery.
+        Il inclut : conseils pratiques, extraits d’exemples de fichiers, bonnes pratiques Looker/BigQuery, documentation automatique, validation et gouvernance.
+    </p>
+
+    <div class="section">
+        <h2>1. Création du projet LookML</h2>
+        <ul>
+            <li>Dans la console développeur Looker : <em>Développeur &gt; Gérer les projets &gt; Nouveau projet</em>.</li>
+            <li>Choisir un nom explicite (ex : <code>hr_bigquery_project</code>).</li>
+            <li>Connecter un repository Git (GitHub, GitLab, Bitbucket) pour le versionnement.</li>
+            <li>Branche de dev recommandée : <code>dev</code> ou une branche <code>feature/...</code> dédiée.</li>
+            <li>Initialiser avec les fichiers de base : <code>README.md</code>, <code>manifest.lkml</code> (optionnel), dossiers <code>views/</code> et <code>lib/</code> si besoins de librairie partagée.</li>
+        </ul>
+        <div class="hint">
+            <pre><code class="language-bash">manifest: {
+  project_name: "hr_bigquery_project"
+  include: "views/*.view.lkml"
+  include: "lib/*.lkml" # optionnel
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Configuration de la connexion à BigQuery</h2>
+        <ul>
+            <li>Looker : <em>Admin &gt; Connexions &gt; Nouvelle connexion</em>.</li>
+            <li>Nom : <code>bigquery_hr_conn</code></li>
+            <li>Dialecte : <em>BigQuery Standard SQL</em></li>
+            <li>Project ID : <code>my-gcp-project</code> (adapté à ton projet GCP)</li>
+            <li>Dataset par défaut : <code>hr_dataset</code></li>
+            <li>Authentification via Service Account JSON</li>
+        </ul>
+        <div class="hint">Tester la connexion et noter le nom EXACT pour configurer le modèle (fichier <code>.model.lkml</code>).</div>
+    </div>
+
+    <div class="section">
+        <h2>3. Création des vues (.view.lkml)</h2>
+        <ul>
+		    <li><p><strong>Où cliquer :</strong> IDE LookML → clic droit sur <code>views/</code> → <em>Nouveau fichier</em> → nomme <code>employees.view.lkml</code>.</p></li>
+			<li><p class="small">Important BigQuery : utiliser la notation backticks <code>`project.dataset.table`</code> pour <code>sql_table_name</code> si tu veux être explicite.</p></li>
+            <li>Définir les clés primaires, masquer les champs techniques, ajouter des descriptions pour la documentation automatique.</li>
+			<li>Créer les autes fichiers <code>.view.lkml</code> par table principale (<em>jobs</em>, <em>departments</em>, etc.).</li>
+        </ul>
+
+        <p class="small">
+            Pour BigQuery, privilégier la forme : <code>sql_table_name: `projet.dataset.table` ;;</code>.
+        </p>
+
+        <div class="hint">
+            <pre><code class="language-bash">view: employees {
+  sql_table_name: `my-gcp-project.hr_dataset.employees` ;;
+
+  dimension: employee_id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.employee_id ;;
+    hidden: yes
+  }
+  dimension: first_name {
+    type: string
+    sql: ${TABLE}.first_name ;;
+    description: "Prénom de l'employé"
+  }
+  dimension: last_name {
+    type: string
+    sql: ${TABLE}.last_name ;;
+    description: "Nom de famille de l'employé"
+  }
+  dimension: hire_date {
+    type: date
+    sql: ${TABLE}.hire_date ;;
+    description: "Date d'embauche"
+  }
+  dimension: salary {
+    type: number
+    sql: ${TABLE}.salary ;;
+    description: "Salaire de l'employé"
+  }
+  measure: count {
+    type: count
+    description: "Nombre d'employés"
+  }
+}</code></pre>
+        </div>
+        <p>
+            Répéter la démarche pour <code>jobs.view.lkml</code>, <code>departments.view.lkml</code>,
+            <code>locations.view.lkml</code>, <code>countries.view.lkml</code>, <code>regions.view.lkml</code>.<br>
+			<p class="hint">Bonnes pratiques : définir les clés primaires (<code>primary_key: yes</code>), masquer les champs techniques (<code>hidden: yes</code>), et remplir les <code>description:</code> pour la documentation automatique.</p>
+        </p>
+        <div class="hint">
+            <pre><code class="language-bash"># Exemple supplémentaire : departments
+view: departments {
+  sql_table_name: `my-gcp-project.hr_dataset.departments` ;;
+
+  dimension: department_id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.department_id ;;
+    hidden: yes
+  }
+
+  dimension: department_name {
+    type: string
+    sql: ${TABLE}.department_name ;;
+    description: "Nom du département"
+  }
+
+  dimension: location_id {
+    type: number
+    sql: ${TABLE}.location_id ;;
+    hidden: yes
+  }
+
+  measure: count {
+    type: count
+    description: "Nombre de lignes dans departments"
+  }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Création du modèle (.model.lkml)</h2>
+        <ul>
+            <li>Créer un fichier <code>employees.model.lkml</code> ou équivalent.</li>
+            <li>Définir la connexion (nom exact), inclure les vues, configurer l’explore, jointures et labels explicites.</li>
+
+        </ul>
+        <div class="hint">
+            <pre><code class="language-bash">connection: "bigquery_hr_conn"
+include: "/views/*.view.lkml"
+
+explore: employees {
+  label: "Employés enrichis"
+
+  join: jobs {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${employees.job_id} = ${jobs.job_id} ;;
+  }
+
+  join: departments {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${employees.department_id} = ${departments.department_id} ;;
+    fields: [departments.department_name] #afficher que department_name
+  }
+
+  join: locations {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${departments.location_id} = ${locations.location_id} ;;
+  }
+
+  join: countries {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${locations.country_id} = ${countries.country_id} ;;
+  }
+
+  join: regions {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${countries.region_id} = ${regions.region_id} ;;
+  }
+
+  always_filter: {
+    sql: ${employees.hire_date} &gt;= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR) ;;
+  }
+}</code></pre>
+        </div>
+        <p>
+            Ajouter <code>label:</code>, <code>description:</code> sur les explores et joints.<br>
+            Utiliser <code>always_filter</code> pour limiter l’horizon temporel (économie de coûts BigQuery).<br>
+			Utiliser <code>fields</code> pour exposer que les champs nécissaire de la vue, restreindre directement les champs exposés dans l’explore ou la jointure via le paramètre fields: [ ... ]<br>
+			Exemple : la table departments possède les champs department_id, department_name, manager_id, location_id et on veut afficher que department_name
+        </p>
+		<img src="./Utilisation_fields.JPG" >
+    </div>
+
+    <div class="section">
+        <h2>5. Tests et validation</h2>
+        <ul>
+            <li>Valider le LookML dans l'IDE pour repérer erreurs et warnings.</li>
+            <li>Tester les explores (« Explorer &gt; Employés enrichis ») pour vérifier jointures et qualité des données.</li>
+        </ul>
+        <div class="hint">
+            <pre><code class="language-bash">test: not_null_employee_id {
+  type: not_null
+  sql: ${employee_id} ;;
+}
+
+test: unique_employee_id {
+  type: unique
+  sql: ${employee_id} ;;
+}</code></pre>
+        </div>
+        <p class="small">Astuce : lancer des requêtes d'exploration simples (par ex. count par département), vérifier le coût estimé via BigQuery.</p>
+    </div>
+
+    <div class="section">
+        <h2>6. Documentation &amp; gouvernance</h2>
+        <ul>
+            <li>Ajoute une <code>description:</code> à chaque vue, dimension et mesure pour la documentation générée.</li>
+            <li>Adopte des standards de nommage (snake_case) et des labels explicites pour les explores.</li>
+            <li>Pour la sécurité : implémenter la <strong>Row-Level Security (RLS)</strong> avec <code>access_filter</code> et <code>user_attribute</code> selon besoin.</li>
+        </ul>
+        <div class="hint">
+            <pre><code class="language-bash">access_filter: {
+  field: employees.department_id
+  user_attribute: allowed_department
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>7. Déploiement (Git + CI/CD)</h2>
+        <ul>
+            <li>Travailler sur des branches feature (<code>feature/...</code>), faire des pull requests, passer la revue de code et fusionner sur la branche production.</li>
+            <li>Déployer via interface Looker (<em>Déployer en production</em>) ou pipeline CI/CD avec tests automatiques.</li>
+        </ul>
+        <div class="hint">
+            Intègre le linting LookML et les tests unitaires dans le pipeline CI/CD pour éviter toute erreur à la mise en production.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>8. Dashboards &amp; rapports</h2>
+        <ol>
+            <li>Construire des requêtes dans <em>Explorer</em> puis sauvegarder en <em>Look</em>.</li>
+            <li>Créer un <em>Dashboard</em>, ajouter tuiles (Looks ou nouvelles requêtes).</li>
+            <li>Ajouter filtres globaux (date, département, région).</li>
+            <li>Activer des alertes (scheduling, thresholds, notifications).</li>
+            <li>Publier/partager les explores validés.</li>
+        </ol>
+        <div class="hint">
+            Marquer les explores validés comme « trusted » ou référencer un catalogue d’explores pour les métiers.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>9. Maintenance &amp; optimisation pour BigQuery</h2>
+        <ul>
+            <li>Partitionner et clusteriser les tables dans BigQuery (par date/département) pour réduire les coûts.</li>
+            <li>Privilégier les filtres sur les partitions dans Looker.</li>
+            <li>Utiliser des PDTs (Persistent Derived Tables) ou aggregations matérialisées pour les besoins fréquents.</li>
+			<li>Utiliser des PDTs (Persistent Derived Tables) pour éviter de recalculer des transformations lourdes à chaque requête.</li>
+			<li>Mettre en place des agrégations matérialisées ou <em>aggregate awareness</em> si nécessaire.</li>
+            <li>Former les utilisateurs finaux sur les évolutions majeures du modèle ou des dashboards.</li>
+        </ul>
+        <div class="hint">
+            <pre><code class="language-bash">view: avg_salary_by_department {
+  derived_table: {
+    sql: SELECT
+           department_id,
+           AVG(salary) AS avg_salary,
+           COUNT(1) AS cnt
+         FROM `my-gcp-project.hr_dataset.employees`
+         WHERE hire_date &gt;= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR)
+         GROUP BY department_id ;;
+    persist_for: "24 hours"
+  }
+  dimension: department_id {
+    type: number
+    sql: ${TABLE}.department_id ;;
+  }
+  measure: avg_salary {
+    type: average
+    sql: ${TABLE}.avg_salary ;;
+  }
+  measure: employees_count {
+    type: sum
+    sql: ${TABLE}.cnt ;;
+  }
+}</code></pre>
+        </div>
+        <p class="small">
+            Attention : Les PDT coûtent lors de leur création/rafraîchissement. Adapter la granularité, fréquence, et volume selon l’usage métier et les coûts BigQuery.
+        </p>
+    </div>
+    
+    <div class="section">
+        <h2>Annexes — Exemples supplémentaires</h2>
+        <p><strong>Exemple : test d'intégrité sur la vue employees</strong></p>
+        <pre><code class="language-bash">test: employees_email_not_null {
+  type: not_null
+  sql: ${employees.email} ;;
+}</code></pre>
+        <h3>Pourquoi ajouter ce test ?</h3>
+        <p>
+            Le test <code>employees_email_not_null</code> permet de vérifier que la colonne <code>email</code> dans la vue <code>employees</code> ne contient pas de valeurs nulles, ce qui est essentiel pour garantir la qualité et la fiabilité des données utilisées dans les analyses.
+            En cas de présence d’une valeur nulle, ce test échoue lors de l’exécution et signale un problème de données à corriger, ce qui évite de faire des analyses sur des données incomplètes ou incorrectes.
+        </p>
+        <p>
+            Ce test peut déclencher une alerte dans l’IDE(environnement de développement intégré)Looker ou dans une pipeline CI/CD, ce qui permet de bloquer le déploiement ou de prévenir l’équipe data afin d’intervenir rapidement pour résoudre le problème.
+            Ainsi, ce mécanisme assure une meilleure gouvernance et confiance dans les rapports générés à partir du modèle LookML.
+        </p>
+    </div>
+</body>
+</html>
