@@ -112,14 +112,12 @@ explore: orders {
   </div>
 
 <div class="section">
-<h2>🔹 5. Fields (dimensions / measures / parameters)</h2>
-<p>Les <strong>fields</strong> regroupent :</p>
+<h2>🔹 5. Dimensions / measures / parameters</h2>
 <ul>
 <li><strong>Dimensions</strong> → champs de détail (ex. id, nom, date, catégorie)</li>
 <li><strong>Measures</strong> → agrégats calculés (ex. count, sum, average)</li>
 <li><strong>Parameters</strong> → variables définies par l'utilisateur (ex. choisir une métrique à afficher)</li>
 </ul>
-
 
 <div class="hint">
 <pre><code class="language-bash">view: employees {
@@ -177,47 +175,48 @@ description: "Classification selon le salaire"
 <div class="section">
 <h2>🔹 6. Joins</h2>
 <p>Un <strong>join</strong> permet de relier deux views. Il est défini dans un <code>explore</code> et doit préciser :</p>
-<ul>
-<li>le type de jointure (<span class="kbd">left_outer</span>, <span class="kbd">inner</span>, etc.)</li>
-<li>la relation (<span class="kbd">one_to_many</span>, <span class="kbd">many_to_one</span>)</li>
-<li>la condition (<code>sql_on</code>)</li>
-</ul>
+	<ul>
+		<li>le type de jointure (<span class="kbd">left_outer</span>, <span class="kbd">inner</span>, etc.)</li>
+		<li>la relation (<span class="kbd">one_to_many</span>, <span class="kbd">many_to_one</span>)</li>
+		<li>la condition (<code>sql_on</code>)</li>
+	</ul>
+
+	<div class="hint">
+	<pre><code class="language-bash">explore: employees {
+	join: departments {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${employees.department_id} = ${departments.department_id} ;;
+	}
 
 
-<div class="hint">
-<pre><code class="language-bash">explore: employees {
-join: departments {
-type: left_outer
-relationship: many_to_one
-sql_on: ${employees.department_id} = ${departments.department_id} ;;
-}
-
-
-join: jobs {
-type: left_outer
-relationship: many_to_one
-sql_on: ${employees.job_id} = ${jobs.job_id} ;;
-}
+	join: jobs {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${employees.job_id} = ${jobs.job_id} ;;
+	}
+		</code></pre>
+    </div>
 </div>
 
-  <div class="section">
-    <h2>🔹 7. Include / Set</h2>
+<div class="section">
+ <h2>🔹 7. Include / Set</h2>
     <p><strong>Include</strong> : organise le code en fichiers. <strong>Set</strong> : regroupe des champs pour une utilisation métier.</p>
-
+ </div>
     <div class="hint">
       <pre><code class="language-bash"># include dans un .model.lkml
-include: "orders.view.lkml"
-include: "customers.view.lkml"
+		include: "orders.view.lkml"
+		include: "customers.view.lkml"
 
-# set dans une view
-view: orders {
-  set: default_fields {
-    fields: [order_id, total_revenue, customers.name]
-  }
-}
-</code></pre>
+		# set dans une view
+		view: orders {
+		  set: default_fields {
+			fields: [order_id, total_revenue, customers.name]
+		  }
+		}
+		</code></pre>
     </div>
-  </div>
+
 
 <h2>7.1 include — Rôle et utilisation</h2>
 <p><strong>👉 Rôle</strong><br>
@@ -292,7 +291,7 @@ fields: [summary_fields] # rend disponibles uniquement ces champs
 </section>
 
   <div class="section">
-    <h2>🔹 7.2.1 fields et drill_fields</h2>
+    <h2>🔹 8 fields et drill_fields</h2>
     <p><strong>fields</strong> : détermine les champs visibles dans un explore (niveau macro).<br>
     <strong>drill_fields</strong> : champs affichés lorsque l'utilisateur clique (drill) sur une cellule (niveau micro).</p>
 
@@ -329,7 +328,7 @@ fields: [summary_fields] # rend disponibles uniquement ces champs
   </div>
 
   <div class="section">
-    <h2>🔹 7.3 Exemple interactif : fields vs drill_fields</h2>
+    <h2>🔹 8.1 Exemple interactif : fields vs drill_fields</h2>
     <p>Scénario : <em>explore: orders</em> expose seulement deux champs via <code>fields</code>. Le <code>measure</code> total_revenue a des <code>drill_fields</code> définis.</p>
 
     <div class="hint">
@@ -398,8 +397,5 @@ measure: total_revenue {
     drill_fields = ce que l'on voit quand on creuse une cellule (micro).</p>
   </div>
 
-  <div class="section cta">
-    <p class="small">Souhaites-tu que j'écrive un mini-projet LookML (ex : <code>employees.model.lkml</code>, <code>employees.view.lkml</code>, <code>departments.view.lkml</code>) basé sur le guide BigQuery fourni ?</p>
-  </div>
 </body>
 </html>
