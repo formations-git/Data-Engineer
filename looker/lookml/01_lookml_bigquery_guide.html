@@ -64,7 +64,20 @@
     </p>
 
     <div class="section">
-        <h2>1. Création du projet LookML</h2>
+        <h2>1. Configuration de la connexion à BigQuery</h2>
+        <ul>
+            <li>Looker : <em>Admin &gt; Connexions &gt; Nouvelle connexion</em>.</li>
+            <li>Nom : <code>bigquery_hr_conn</code></li>
+            <li>Dialecte : <em>BigQuery Standard SQL</em></li>
+            <li>Project ID : <code>my-gcp-project</code> (adapté à ton projet GCP)</li>
+            <li>Dataset par défaut : <code>hr_dataset</code></li>
+            <li>Authentification via Service Account JSON</li>
+        </ul>
+        <div class="hint">Tester la connexion et noter le nom EXACT pour configurer le modèle (fichier <code>.model.lkml</code>).</div>
+    </div>
+
+    <div class="section">
+        <h2>2. Création du projet LookML</h2>
         <ul>
             <li>Dans la console développeur Looker : <em>Développeur &gt; Gérer les projets &gt; Nouveau projet</em>.</li>
             <li>Choisir un nom explicite (ex : <code>hr_bigquery_project</code>).</li>
@@ -79,19 +92,6 @@
   include: "lib/*.lkml" # optionnel
 }</code></pre>
         </div>
-    </div>
-
-    <div class="section">
-        <h2>2. Configuration de la connexion à BigQuery</h2>
-        <ul>
-            <li>Looker : <em>Admin &gt; Connexions &gt; Nouvelle connexion</em>.</li>
-            <li>Nom : <code>bigquery_hr_conn</code></li>
-            <li>Dialecte : <em>BigQuery Standard SQL</em></li>
-            <li>Project ID : <code>my-gcp-project</code> (adapté à ton projet GCP)</li>
-            <li>Dataset par défaut : <code>hr_dataset</code></li>
-            <li>Authentification via Service Account JSON</li>
-        </ul>
-        <div class="hint">Tester la connexion et noter le nom EXACT pour configurer le modèle (fichier <code>.model.lkml</code>).</div>
     </div>
 
     <div class="section">
