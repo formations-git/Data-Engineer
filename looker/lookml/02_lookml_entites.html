@@ -332,14 +332,15 @@ fields: [summary_fields] # rend disponibles uniquement ces champs
     <p>Scénario : <em>explore: orders</em> expose seulement deux champs via <code>fields</code>. Le <code>measure</code> total_revenue a des <code>drill_fields</code> définis.</p>
 
     <div class="hint">
-      <pre><code class="language-bash">explore: orders {
-  fields: [orders.order_date, orders.total_revenue]
-}
-
+      <pre><code class="language-bash">
 measure: total_revenue {
   type: sum
   sql: ${TABLE}.amount ;;
   drill_fields: [order_id, customer_name, product_name]
+}
+
+explore: orders {
+  fields: [orders.order_date, orders.total_revenue]
 }
 </code></pre>
     </div>
