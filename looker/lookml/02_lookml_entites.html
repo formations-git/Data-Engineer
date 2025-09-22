@@ -370,31 +370,9 @@ measure: total_revenue {
   </div>
 
   <div class="section">
-    <h2>🔹 Comparaison rapide</h2>
-    <table>
-      <thead>
-        <tr><th>Élément</th><th>Objectif</th><th>Niveau</th><th>Exemple typique</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>include</td><td>Modulariser et importer du code</td><td>Organisation technique</td><td><code>include: "*.view.lkml"</code></td></tr>
-        <tr><td>set</td><td>Grouper des champs métier</td><td>Fonctionnel (métier)</td><td><code>set: summary_fields { fields: [order_date, total_revenue] }</code></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="section">
-    <h2>🔹 Cas d'usage</h2>
-    <ul>
-      <li><strong>include</strong> : projet complexe (20+ tables) → chaque table dans son propre fichier .view.lkml.</li>
-      <li><strong>set</strong> : créer une version « light » d'un explore pour utilisateurs non techniques.</li>
-      <li><strong>drill_fields</strong> : éviter d'exposer trop de champs en explore tout en proposant une vue détaillée au clic.</li>
-    </ul>
-  </div>
-
-  <div class="section">
     <h2>🔹 En résumé</h2>
     <p>fields = ce que l'on voit dans l'explore (macro).<br>
-    drill_fields = ce que l'on voit quand on creuse une cellule (micro).</p>
+    drill_fields = ce que l'on voit quand on creuse une cellule (micro). celà évite d'exposer trop de champs en explore tout en proposant une vue détaillée au clic</p>
   </div>
 
 </body>
