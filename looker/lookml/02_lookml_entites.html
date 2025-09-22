@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guide — Entités LookML (connection, model, views, explores, fields, sets, drill_fields)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    /* Reprend le style du guide original */
+    body { font-family: Inter, Roboto, Arial; max-width: 980px; margin: 28px auto; padding: 20px; line-height: 1.55; color: #f1f1f1; background: #0b1d3a; }
+    h1,h2 { color: #f8f8f2; }
+    pre { background-color: transparent !important; padding: 0 !important; border-radius: 0 !important; overflow-x: auto; margin: 12px 0; }
+    .hljs { background-color: #033466 !important; padding: 10px !important; border-radius: 4px !important; }
+    code { font-family: Consolas, Monaco, monospace; font-size: 14px; color: #f8f8f2; }
+    p, li { color: #cccccc; }
+    .hint { background: #163d66; border-left: 4px solid #4da6ff; padding: 12px; margin: 12px 0; border-radius: 6px; color: #fff; }
+    .section { margin-bottom: 20px; }
+    ul { margin-left: 1.25em; }
+    .small { font-size: 90%; color: #bfcbdc; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { border: 1px solid rgba(255,255,255,0.08); padding: 8px; text-align: left; }
+    th { background: rgba(255,255,255,0.04); }
+    .kbd { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+    .note { color: #a8d1ff; font-size: 95%; }
+    .cta { margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Entités LookML — connexion, modèle, views, explores, fields, sets et drill_fields</h1>
+  <p class="small">Page adaptée et enrichie à partir d'un guide LookML orienté BigQuery. Cette page explique chaque entité et fournit des exemples LookML réutilisables.</p>
+
+  <div class="section">
+    <h2>🔹 1. Connection</h2>
+    <p>Définie dans <strong>Admin &gt; Connexions</strong> (hors LookML). Le fichier <code>.model.lkml</code> référence cette connexion pour interroger la source de données.</p>
+    <div class="hint">
+      <pre><code class="language-bash"># Exemple dans un modèle
+connection: "bigquery_hr_conn"</code></pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔹 2. Model (fichier .model.lkml)</h2>
+    <p>Fichier d'entrée du projet. On y déclare la <span class="kbd">connection</span>, les <span class="kbd">include</span> et les <span class="kbd">explore</span> exposés aux utilisateurs.</p>
+
+    <div class="hint">
+      <pre><code class="language-bash">connection: "my_database"
+include: "*.view.lkml"
+include: "*.explore.lkml"
+
+explore: orders {
+  label: "Commandes"
+  join: customers
+}
+</code></pre>
+    </div>
+
+    <p class="note">Note : adapte le nom de connexion au nom exact créé dans l'admin Looker (par ex. <em>bigquery_hr_conn</em>).</p>
+  </div>
+
+  <div class="section">
+    <h2>🔹 3. View (fichier .view.lkml)</h2>
+    <p>Une <strong>view</strong> représente généralement une table SQL et définit les dimensions, measures et éventuellement des sets.</p>
+
+    <div class="hint">
+      <pre><code class="language-bash">view: orders {
+  sql_table_name: `schema.orders` ;;
+
+  dimension: order_id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.order_id ;;
+  }
+
+  dimension: order_date {
+    type: date
+    sql: ${TABLE}.order_date ;;
+  }
+
+  measure: total_revenue {
+    type: sum
+    sql: ${TABLE}.order_total ;;
+  }
+
+  # Exemple de set dans la view
+  set: summary_fields {
+    fields: [order_date, total_revenue]
+  }
+}
+</code></pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔹 4. Explore</h2>
+    <p>Point d'accès utilisateur qui définit une view principale et des joins vers d'autres views.</p>
+
+    <div class="hint">
+      <pre><code class="language-bash">explore: orders {
+  join: customers {
+    type: left_outer
+    sql_on: ${orders.customer_id} = ${customers.id} ;;
+  }
+
+  # Restreindre les champs exposés dans l'explore
+  fields: [orders.order_date, orders.total_revenue, customers.name]
+}
+</code></pre>
+    </div>
+  </div>
+
+<div class="section">
+<h2>🔹 5. Fields (dimensions / measures / parameters)</h2>
+<p>Les <strong>fields</strong> regroupent :</p>
+<ul>
+<li><strong>Dimensions</strong> → champs de détail (ex. id, nom, date, catégorie)</li>
+<li><strong>Measures</strong> → agrégats calculés (ex. count, sum, average)</li>
+<li><strong>Parameters</strong> → variables définies par l'utilisateur (ex. choisir une métrique à afficher)</li>
+</ul>
+
+
+<div class="hint">
+<pre><code class="language-bash">view: employees {
+sql_table_name: `my_dataset.employees` ;;
+
+
+dimension: employee_id {
+primary_key: yes
+type: number
+sql: ${TABLE}.employee_id ;;
+}
+
+
+dimension: full_name {
+type: string
+sql: CONCAT(${TABLE}.first_name, " ", ${TABLE}.last_name) ;;
+description: "Nom complet de l'employé"
+}
+
+
+dimension: hire_date {
+type: date
+sql: ${TABLE}.hire_date ;;
+}
+
+
+measure: count {
+type: count
+description: "Nombre d'employés"
+}
+
+
+measure: avg_salary {
+type: average
+sql: ${TABLE}.salary ;;
+description: "Salaire moyen"
+}
+
+
+parameter: salary_tier {
+type: unquoted
+allowed_value: { label: "Junior" value: "&lt; 3000" }
+allowed_value: { label: "Senior" value: "&gt;= 3000" }
+description: "Classification selon le salaire"
+}
+}
+</code></pre>
+</div>
+
+
+<p class="note">Les dimensions/mesures apparaissent comme champs dans l'interface Explore. Les parameters servent à rendre un champ interactif ou configurable.</p>
+</div>
+
+
+<div class="section">
+<h2>🔹 6. Joins</h2>
+<p>Un <strong>join</strong> permet de relier deux views. Il est défini dans un <code>explore</code> et doit préciser :</p>
+<ul>
+<li>le type de jointure (<span class="kbd">left_outer</span>, <span class="kbd">inner</span>, etc.)</li>
+<li>la relation (<span class="kbd">one_to_many</span>, <span class="kbd">many_to_one</span>)</li>
+<li>la condition (<code>sql_on</code>)</li>
+</ul>
+
+
+<div class="hint">
+<pre><code class="language-bash">explore: employees {
+join: departments {
+type: left_outer
+relationship: many_to_one
+sql_on: ${employees.department_id} = ${departments.department_id} ;;
+}
+
+
+join: jobs {
+type: left_outer
+relationship: many_to_one
+sql_on: ${employees.job_id} = ${jobs.job_id} ;;
+}
+</div>
+
+  <div class="section">
+    <h2>🔹 7. Include / Set</h2>
+    <p><strong>Include</strong> : organise le code en fichiers. <strong>Set</strong> : regroupe des champs pour une utilisation métier.</p>
+
+    <div class="hint">
+      <pre><code class="language-bash"># include dans un .model.lkml
+include: "orders.view.lkml"
+include: "customers.view.lkml"
+
+# set dans une view
+view: orders {
+  set: default_fields {
+    fields: [order_id, total_revenue, customers.name]
+  }
+}
+</code></pre>
+    </div>
+  </div>
+
+<h2>7.1 include — Rôle et utilisation</h2>
+<p><strong>👉 Rôle</strong><br>
+Sert à modulariser le code LookML en incluant d’autres fichiers. Permet de structurer un projet LookML en plusieurs fichiers (<code>.view.lkml</code>, <code>.explore.lkml</code>, <code>.model.lkml</code>, etc.). Fonctionne comme un import dans d’autres langages.</p>
+
+
+<p><strong>👉 Utilisation</strong><br>
+Dans un fichier <code>.model.lkml</code> :</p>
+<div class="hint">
+<pre><code>include: "*.view" # inclut toutes les views\include: "orders.view" # inclut uniquement le fichier des commandes
+include: "*.explore" # inclut tous les explores</code></pre>
+</div>
+
+
+<p>➡️ Typiquement, un projet LookML bien organisé :</p>
+<ul>
+<li><code>ecommerce.model.lkml</code> (modèle principal)</li>
+<li><code>orders.view.lkml</code></li>
+<li><code>customers.view.lkml</code></li>
+<li><code>products.view.lkml</code></li>
+</ul>
+<p>Grâce aux <code>include</code>, le fichier modèle « voit » les définitions de toutes les views/explores.</p>
+
+
+<h2>7.2 set — Rôle et utilisation</h2>
+<p><strong>👉 Rôle</strong><br>
+Sert à grouper des champs (dimensions, mesures, voire filtres) pour simplifier l’exploration. On peut ensuite utiliser ces sets dans les explores ou dans des restrictions (<code>always_filter</code>, <code>fields</code>, etc.). C’est un mécanisme métier (contrairement à <code>include</code> qui est purement technique).</p>
+
+
+<p><strong>👉 Utilisation</strong><br>
+Définition d’un set dans une view :</p>
+<div class="hint">
+<pre><code>view: orders {
+dimension: order_id { type: number sql: ${TABLE}.id ;; }
+dimension: order_date { type: date sql: ${TABLE}.date ;; }
+measure: total_revenue { type: sum sql: ${TABLE}.amount ;; }
+measure: count_orders { type: count ;; }
+
+
+set: summary_fields {
+fields: [order_date, total_revenue, count_orders]
+}
+}
+</code></pre>
+</div>
+
+<p><strong>👉 Réutilisation dans un explore :</strong></p>
+<div class="hint">
+<pre><code>
+explore: orders {
+fields: [summary_fields] # rend disponibles uniquement ces champs
+}</code></pre>
+</div>
+
+<h3>🔹 Comparaison rapide</h3>
+<section class="hint"> 
+<div class="table-like">
+<table>
+<tr><th>Élément</th><th>Objectif</th><th>Niveau</th><th>Exemple typique</th></tr>
+<tr><td>include</td><td>Modulariser et importer du code</td><td>Organisation technique du projet</td><td><code>include: "*.view"</code></td></tr>
+<tr><td>set</td><td>Grouper des champs pour simplifier ou restreindre l’exploration</td><td>Fonctionnel (métier)</td><td><code>set: summary_fields { fields: [order_date, total_revenue] }</code></td></tr>
+</table>
+</div>
+</section>
+
+<h3>🔹 Cas d’usage typiques</h3>
+<section class="hint"> 
+<ul>
+<li><strong>✅ include</strong> : Projet complexe avec 20+ tables → chaque table dans son propre fichier .view.lkml, puis inclus dans le modèle.</li>
+<li><strong>✅ set</strong> : Créer une version "light" d’un explore avec seulement les champs principaux, ou limiter les champs visibles selon le rôle utilisateur.</li>
+</ul>
+</section>
+
+  <div class="section">
+    <h2>🔹 7.2.1 fields et drill_fields</h2>
+    <p><strong>fields</strong> : détermine les champs visibles dans un explore (niveau macro).<br>
+    <strong>drill_fields</strong> : champs affichés lorsque l'utilisateur clique (drill) sur une cellule (niveau micro).</p>
+
+<section class="hint"> 
+    <table>
+      <thead>
+        <tr><th>Élément</th><th>Quand ?</th><th>Ce que ça fait</th><th>Exemple</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>fields</td>
+          <td>Avant / dans Explore</td>
+          <td>Restreint ou expose les champs visibles</td>
+          <td><code>fields: [order_date, total_revenue]</code></td>
+        </tr>
+        <tr>
+          <td>drill_fields</td>
+          <td>Après / en drill</td>
+          <td>Définit les champs détaillés affichés au clic</td>
+          <td><code>drill_fields: [order_id, customer_name, product_name]</code></td>
+        </tr>
+      </tbody>
+    </table>
+</section> 
+
+    <div class="hint">
+      <pre><code class="language-bash">measure: total_revenue {
+  type: sum
+  sql: ${TABLE}.amount ;;
+  drill_fields: [order_id, order_date, customers.name]
+}
+</code></pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔹 7.3 Exemple interactif : fields vs drill_fields</h2>
+    <p>Scénario : <em>explore: orders</em> expose seulement deux champs via <code>fields</code>. Le <code>measure</code> total_revenue a des <code>drill_fields</code> définis.</p>
+
+    <div class="hint">
+      <pre><code class="language-bash">explore: orders {
+  fields: [orders.order_date, orders.total_revenue]
+}
+
+measure: total_revenue {
+  type: sum
+  sql: ${TABLE}.amount ;;
+  drill_fields: [order_id, customer_name, product_name]
+}
+</code></pre>
+    </div>
+
+    <p class="note">Exemple visuel (résultats d'explore) :</p>
+    <table>
+      <thead>
+        <tr><th>Order Date</th><th>Total Revenue</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2025-09-01</td><td>1,250 €</td></tr>
+        <tr><td>2025-09-02</td><td>980 €</td></tr>
+        <tr><td>2025-09-03</td><td>1,540 €</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note">Après clic (drill) sur <em>1,250 €</em>, Looker affiche la vue détaillée suivante (selon <code>drill_fields</code>) :</p>
+    <table>
+      <thead>
+        <tr><th>Order ID</th><th>Customer Name</th><th>Product Name</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>10123</td><td>Alice Dupont</td><td>Laptop</td><td>850 €</td></tr>
+        <tr><td>10124</td><td>Marc Petit</td><td>Mouse</td><td>30 €</td></tr>
+        <tr><td>10125</td><td>Julie Martin</td><td>Monitor</td><td>370 €</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>🔹 Comparaison rapide</h2>
+    <table>
+      <thead>
+        <tr><th>Élément</th><th>Objectif</th><th>Niveau</th><th>Exemple typique</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>include</td><td>Modulariser et importer du code</td><td>Organisation technique</td><td><code>include: "*.view.lkml"</code></td></tr>
+        <tr><td>set</td><td>Grouper des champs métier</td><td>Fonctionnel (métier)</td><td><code>set: summary_fields { fields: [order_date, total_revenue] }</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>🔹 Cas d'usage</h2>
+    <ul>
+      <li><strong>include</strong> : projet complexe (20+ tables) → chaque table dans son propre fichier .view.lkml.</li>
+      <li><strong>set</strong> : créer une version « light » d'un explore pour utilisateurs non techniques.</li>
+      <li><strong>drill_fields</strong> : éviter d'exposer trop de champs en explore tout en proposant une vue détaillée au clic.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🔹 En résumé</h2>
+    <p>fields = ce que l'on voit dans l'explore (macro).<br>
+    drill_fields = ce que l'on voit quand on creuse une cellule (micro).</p>
+  </div>
+
+  <div class="section cta">
+    <p class="small">Souhaites-tu que j'écrive un mini-projet LookML (ex : <code>employees.model.lkml</code>, <code>employees.view.lkml</code>, <code>departments.view.lkml</code>) basé sur le guide BigQuery fourni ?</p>
+  </div>
+</body>
+</html>
