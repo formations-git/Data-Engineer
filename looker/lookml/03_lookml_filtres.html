@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide LookML - Filtres et SQL</title>
+
+    <!-- Highlight.js thème foncé -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <style>
+        body {
+            font-family: Inter, Roboto, Arial, sans-serif;
+            max-width: 980px;
+            margin: 28px auto;
+            padding: 20px;
+            line-height: 1.55;
+            color: #f1f1f1;
+            background: #0b1d3a;
+        }
+        h1, h2, h3, h4 {
+            color: #f8f8f2;
+        }
+        pre {
+            background-color: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        .hljs {
+            background-color: #033466 !important;
+            padding: 10px !important;
+            border-radius: 4px !important;
+        }
+        code {
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            color: #f8f8f2;
+        }
+        p, li {
+            color: #cccccc;
+        }
+        .hint, .sql-equivalent {
+            background: #163d66;
+            border-left: 4px solid #4da6ff;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 6px;
+            color: #fff;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #163d66;
+        }
+        th, td {
+            border: 1px solid #4da6ff;
+            padding: 8px;
+            text-align: left;
+            color: #f1f1f1;
+        }
+        th {
+            background-color: #033466;
+        }
+        ul { margin-left: 18px; }
+        .small { font-size: 90%; color: #bfcbdc; }
+    </style>
+</head>
+<body>
+
+    <h1>Guide LookML - Vue Employee Details et Filtres</h1>
+
+    <h2>1. Vue : <code>employee_details_pdt</code></h2>
+    <pre><code class="language-python">
+view: employee_details_pdt {
+  
+  derived_table: {
+    sql:
+      SELECT
+        EMPLOYEES.PERDIO_DATE,
+        EMPLOYEES.EMPLOYEE_ID,
+        EMPLOYEES.FIRST_NAME,
+        EMPLOYEES.LAST_NAME,
+        EMPLOYEES.EMAIL,
+        EMPLOYEES.PHONE_NUMBER,
+        EMPLOYEES.HIRE_DATE,
+        JOBS.JOB_TITLE,
+        EMPLOYEES.SALARY,
+        EMPLOYEES.COMMISSION_PCT,
+        D1.DEPARTMENT_NAME,
+        LOCATIONS.CITY,
+        COUNTRIES.COUNTRY_NAME
+      FROM EMPLOYEES
+      LEFT JOIN JOBS 
+        ON EMPLOYEES.JOB_ID = JOBS.JOB_ID
+      LEFT JOIN DEPARTMENTS D1 
+        ON EMPLOYEES.DEPARTMENT_ID = D1.DEPARTMENT_ID
+      LEFT JOIN LOCATIONS 
+        ON LOCATIONS.LOCATION_ID = D1.LOCATION_ID
+      LEFT JOIN COUNTRIES 
+        ON COUNTRIES.COUNTRY_ID = LOCATIONS.COUNTRY_ID
+    ;;
+    sql_trigger_value: SELECT MAX(PERDIO_DATE) FROM EMPLOYEES ;;
+    persist_for: "35 days"
+  }
+
+  # Dimensions
+
+  dimension: perdio_date {
+    type: date
+    sql: ${TABLE}.PERDIO_DATE ;;
+  }
+
+  dimension: employee_id {
+    type: number
+    sql: ${TABLE}.EMPLOYEE_ID ;;
+  }
+
+  dimension: first_name {
+    type: string
+    sql: ${TABLE}.FIRST_NAME ;;
+  }
+
+  dimension: last_name {
+    type: string
+    sql: ${TABLE}.LAST_NAME ;;
+  }
+
+  dimension: email {
+    type: string
+    sql: ${TABLE}.EMAIL ;;
+  }
+
+  dimension: phone_number {
+    type: string
+    sql: ${TABLE}.PHONE_NUMBER ;;
+  }
+
+  dimension: hire_date {
+    type: date
+    sql: ${TABLE}.HIRE_DATE ;;
+  }
+
+  dimension: job_title {
+    type: string
+    sql: ${TABLE}.JOB_TITLE ;;
+  }
+
+  dimension: salary {
+    type: number
+    sql: ${TABLE}.SALARY ;;
+  }
+
+  dimension: commission_pct {
+    type: number
+    sql: ${TABLE}.COMMISSION_PCT ;;
+  }
+
+  dimension: department_name {
+    type: string
+    sql: ${TABLE}.DEPARTMENT_NAME ;;
+  }
+
+  dimension: city {
+    type: string
+    sql: ${TABLE}.CITY ;;
+  }
+
+  dimension: country_name {
+    type: string
+    sql: ${TABLE}.COUNTRY_NAME ;;
+  }
+
+  # Filtres simplifiés en utilisant les dimensions
+
+  filter: department_filter {
+    type: string
+    suggest_dimension: department_name
+    sql: {% condition department_filter %} ${department_name} {% endcondition %} ;;
+  }
+
+  filter: job_filter {
+    type: string
+    suggest_dimension: job_title
+    sql: {% condition job_filter %} ${job_title} {% endcondition %} ;;
+  }
+
+  filter: salary_filter {
+    type: number
+    sql: {% condition salary_filter %} ${salary} {% endcondition %} ;;
+  }
+
+  filter: hire_date_filter {
+    type: date
+    sql: {% condition hire_date_filter %} ${hire_date} {% endcondition %} ;;
+  }
+}
+
+    </code></pre>
+
+    <h2>2. Structure et utilisation des filtres LookML</h2>
+
+    <h3>2.1 Filtre string (texte)</h3>
+    <pre><code class="language-python">
+filter: department_filter {
+  type: string
+  suggest_dimension: department_name
+  sql: {% condition department_filter %} ${department_name} {% endcondition %} ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+		type: string → type attendu (texte).<br>
+		suggest_dimension: department_name → Looker propose automatiquement la liste des valeurs possibles de la dimension (ex : Finance, IT, Marketing).<br>
+		La clause SQL {% condition department_filter %} ${department_name} {% endcondition %} est un template Looker qui génère la condition SQL selon le choix utilisateur.<br><br>
+		Exemples SQL générés :<br>
+		Si l’utilisateur choisit "IT" → WHERE department_name = 'IT'<br>
+		Pour plusieurs valeurs ("Finance" + "Marketing") → WHERE department_name IN ('Finance','Marketing')<br>
+    </div>
+    <p><strong>Utilisation :</strong> Filtrer les données par texte, par exemple choisir des départements ou catégories. Looker propose les valeurs disponibles grâce à <code>suggest_dimension</code>.</p>
+
+    <h3>2.2 Filtre number (numérique)</h3>
+    <pre><code class="language-python">
+filter: salary_filter {
+  type: number
+  sql: {% condition salary_filter %} ${salary} {% endcondition %} ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        &gt; 5000 → <code>WHERE salary > 5000</code><br>
+        BETWEEN 3000 AND 7000 → <code>WHERE salary BETWEEN 3000 AND 7000</code>
+    </div>
+    <p><strong>Utilisation :</strong> Permet de filtrer sur des valeurs numériques, comme le salaire, quantités ou scores. Supporte opérateurs classiques et plages.</p>
+
+    <h3>2.3 Filtre date</h3>
+    <pre><code class="language-python">
+filter: hire_date_filter {
+  type: date
+  sql: {% condition hire_date_filter %} ${hire_date} {% endcondition %} ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        Dernier 1 an → <code>WHERE hire_date >= DATEADD('year', -1, CURRENT_DATE)</code><br>
+        Plage 2020-01-01 à 2020-12-31 → <code>WHERE hire_date BETWEEN '2020-01-01' AND '2020-12-31'</code>
+    </div>
+    <p><strong>Utilisation :</strong> Filtrer les données selon des dates ou périodes relatives. Très pratique pour analyses temporelles.</p>
+
+    <h3>2.4 Filtre yesno (booléen)</h3>
+    <pre><code class="language-python">
+filter: active_filter {
+  type: yesno
+  sql: {% condition active_filter %} ${TABLE}.IS_ACTIVE {% endcondition %} ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        yes → <code>WHERE IS_ACTIVE = TRUE</code><br>
+        no → <code>WHERE IS_ACTIVE = FALSE</code>
+    </div>
+    <p><strong>Utilisation :</strong> Filtrer selon un état vrai/faux, par exemple employés actifs ou commandes complétées.</p>
+
+    <h3>2.5 Filtre restreignant une mesure</h3>
+    <pre><code class="language-python">
+measure: total_salary_it {
+  type: sum
+  sql: ${salary} ;;
+  filters: [department_name: "IT"]
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        <code>SELECT SUM(salary) FROM employees WHERE department_name = 'IT'</code>
+    </div>
+    <p><strong>Utilisation :</strong> Limiter une mesure à une condition spécifique sans affecter les filtres utilisateur.</p>
+
+    <h3>2.6 Filtre dynamique dans derived_table (templated filter)</h3>
+    <pre><code class="language-python">
+derived_table: {
+  sql:
+    SELECT *
+    FROM employees
+    WHERE {% condition hire_date_filter %} hire_date {% endcondition %}
+  ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        La clause WHERE est générée dynamiquement selon le filtre appliqué par l'utilisateur.
+    </div>
+    <p><strong>Utilisation :</strong> Rendre les tables dérivées paramétrables selon le filtre utilisateur, améliorant performance et flexibilité.</p>
+
+
+
+    <h3>2.7 Filtre dynamique dans derived_table (templated filter)</h3>
+    <pre><code class="language-python">
+view: employee_details_pdt {
+  derived_table: {
+    sql: 
+      SELECT.........
+      FROM EMPLOYEES
+      LEFT JOIN JOBS ON EMPLOYEES.JOB_ID = JOBS.JOB_ID
+      LEFT JOIN DEPARTMENTS D1 ON EMPLOYEES.DEPARTMENT_ID = D1.DEPARTMENT_ID
+      LEFT JOIN DEPARTMENTS D2 ON EMPLOYEES.MANAGER_ID = D2.MANAGER_ID
+      LEFT JOIN LOCATIONS ON LOCATIONS.LOCATION_ID = D2.LOCATION_ID
+      LEFT JOIN COUNTRIES ON COUNTRIES.COUNTRY_ID = LOCATIONS.COUNTRY_ID
+    ;;
+
+    sql_trigger_value: SELECT MAX(PERDIO_DATE) FROM EMPLOYEES ;;
+    persist_for: "35 days"
+  }
+
+  dimension: department_name {
+    type: string
+    sql: ${TABLE}.DEPARTMENT_NAME ;;
+  }
+
+  # Autres dimensions ici...
+
+  # Accès restreint aux départements selon l'utilisateur courant
+  access_filter: {
+    field: department_name
+    user_attribute: allowed_department
+  }
+}
+
+    </code></pre>
+    <div class="sql-equivalent">
+        Explications :<br>
+		access_filter restreint les données accessibles selon la dimension department_name.<br>
+		Le champ user_attribute est un attribut utilisateur Looker — ici allowed_department — qui stocke le nom ou la liste des départements auxquels l'utilisateur a accès.<br>
+		Lorsqu'un utilisateur exécute une requête, Looker applique automatiquement une clause WHERE department_name IN (allowed_department) pour ne retourner que les employés des départements autorisés.<br>
+		Il faut donc configurer en amont les attributs utilisateurs allowed_department avec les droits départementaux correspondants dans l’admin Looker.<br>
+		Cette configuration garantit la sécurité des données en limitant la visibilité des employés par département, selon les droits définis sur chaque utilisateur de Looker.<br>
+    </div>
+
+
+
+    <h3>2.8 Filtre permanent invisible (sql_always_where)</h3>
+    <pre><code class="language-python">
+explore: employees {
+  sql_always_where: ${employees.is_active} = 'Y' ;;
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        Toujours appliqué : <code>WHERE IS_ACTIVE = 'Y'</code>
+    </div>
+    <p><strong>Utilisation :</strong> Filtrage technique invisible pour sécurité ou performance. L’utilisateur ne voit ni ne modifie ce filtre.</p>
+
+    <h3>2.9 Filtre permanent visible (always_filter)</h3>
+    <pre><code class="language-python">
+explore: orders {
+  always_filter: {
+    filters: [status: "completed"]
+  }
+}
+    </code></pre>
+    <div class="sql-equivalent">
+        <strong>Équivalence SQL :</strong><br>
+        Toujours appliqué mais modifiable par l’utilisateur : <code>WHERE status = 'completed'</code>
+    </div>
+    <p><strong>Utilisation :</strong> Filtrage obligatoire et visible dans l’UI. L’utilisateur peut changer la valeur mais ne peut pas retirer le filtre.</p>
+
+    <h2>3. Comparatif visuel des filtres permanents</h2>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>sql_always_where</th>
+            <th>always_filter</th>
+        </tr>
+        <tr><td>Visibilité utilisateur</td><td>❌</td><td>✔️</td></tr>
+        <tr><td>Modifier valeur filtre</td><td>❌</td><td>✔️</td></tr>
+        <tr><td>Supprimer filtre</td><td>❌</td><td>❌</td></tr>
+        <tr><td>Impact sur explore</td><td>Permanent via SQL</td><td>Valeur par défaut configurable</td></tr>
+        <tr><td>Cas d’usage</td><td>Sécurité stricte</td><td>Gouvernance conviviale</td></tr>
+    </table>
+
+    <h2>2.10 Résumé</h2>
+	<table>
+	  <thead>
+		<tr>
+		  <th>Type de filtre</th>
+		  <th>Où s’applique‑t‑il ?</th>
+		  <th>Description</th>
+		  <th>Exemple SQL généré</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<tr>
+		  <td><code>filter:</code> (champ filtre)</td>
+		  <td>Exploration → filtre utilisateur (non affichable)</td>
+		  <td>Champ filtre paramétrable, utilisable en WHERE</td>
+		  <td><pre><code>WHERE department_name = 'Finance'</code></pre></td>
+		</tr>
+		<tr>
+		  <td><code>filters:</code> (dans une mesure)</td>
+		  <td>Mesure spécifique</td>
+		  <td>Restreint une mesure à une condition fixe</td>
+		  <td><pre><code>SUM(salary) WHERE department_name = 'IT'</code></pre></td>
+		</tr>
+		<tr>
+		  <td>Templated filter (dans PDT)</td>
+		  <td>Derived table / PDT</td>
+		  <td>Injection dynamique de filtre dans SQL du PDT</td>
+		  <td><pre><code>WHERE hire_date BETWEEN '2020-01-01' AND '2020-12-31'</code></pre></td>
+		</tr>
+		<tr>
+		  <td><code>access_filter:</code></td>
+		  <td>Sécurité row-level (vue/explore)</td>
+		  <td>Limite les données visibles selon utilisateur</td>
+		  <td><pre><code>WHERE department_name = 'user_department'</code></pre></td>
+		</tr>
+		<tr>
+		  <td><code>sql_always_where:</code></td>
+		  <td>Explore entier</td>
+		  <td>Filtre permanent invisible, toujours actif</td>
+		  <td><pre><code>WHERE is_active = 'Y'</code></pre></td>
+		</tr>
+		<tr>
+		  <td><code>sql_where:</code> (dans une join)</td>
+		  <td>Filtre sur jointure spécifique</td>
+		  <td>Limite les données d’une jointure à une condition</td>
+		  <td><pre><code>LEFT JOIN orders ON ... AND orders.status = 'completed'</code></pre></td>
+		</tr>
+	  </tbody>
+	</table>
+</body>
+</html>
