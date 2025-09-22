@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Guide — Suivi Et Analyse Des Requêtes Et Coûts Sur Gcp</title>
+    <!-- Intégration du style et script Highlight.js avec thème foncé -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        body {
+            font-family: Inter, Roboto, Arial;
+            max-width: 980px;
+            margin: 28px auto;
+            padding: 20px;
+            line-height: 1.55;
+            color: #f1f1f1;
+            background: #0b1d3a;
+        }
+        h1, h2 {
+            color: #f8f8f2;
+        }
+        pre {
+            background-color: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        .hljs {
+            background-color: #033466 !important;
+            padding: 10px !important;
+            border-radius: 4px !important;
+        }
+        code {
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            color: #f8f8f2;
+        }
+        p, li {
+            color: #cccccc;
+        }
+        .hint {
+            background: #163d66;
+            border-left: 4px solid #4da6ff;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 6px;
+            color: #fff;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        ul { margin-left: 1.25em; }
+        .small { font-size: 90%; color: #bfcbdc; }
+    </style>
+</head>
+<body>
+
+<h1>Suivi et analyse des requêtes et coûts sur GCP</h1>
+
+<div class="section">
+<h2>1️⃣ Créer un projet pour stocker les données de facturation</h2>
+<ul>
+<li>Ouvre la <strong>Console GCP → Gestion des projets → Créer un projet</strong>.</li>
+<li>Donne-lui un nom clair, par exemple <code>billing-export</code>.</li>
+<li>Assure-toi que <strong>la facturation est activée</strong> pour ce projet :</li>
+<ul>
+<li>Menu : <strong>Facturation → Associer un compte de facturation</strong>.</li>
+</ul>
+</ul>
+</div>
+
+<div class="section">
+<h2>2️⃣ Configurer les autorisations</h2>
+<p>Pour que le transfert Cloud Billing → BigQuery fonctionne :</p>
+<ul>
+<li>L’utilisateur qui configure l’export doit avoir les rôles :</li>
+<ul>
+<li><code>roles/bigquery.admin</code> sur le projet cible</li>
+<li><code>roles/billing.admin</code> ou <code>roles/billing.user</code> sur le compte de facturation à exporter</li>
+</ul>
+<li>Vérifie dans <strong>IAM & Admin → IAM</strong> que les rôles sont bien attribués.</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>3️⃣ Activer l’API BigQuery Data Transfer Service</h2>
+<ul>
+<li>Menu : <strong>API & Services → Bibliothèque</strong></li>
+<li>Rechercher <strong>BigQuery Data Transfer Service</strong></li>
+<li>Cliquer sur <strong>Activer</strong></li>
+</ul>
+<div class="hint">💡 Cette API est nécessaire pour créer un transfert automatique Cloud Billing → BigQuery.</div>
+</div>
+
+<div class="section">
+<h2>4️⃣ Créer un ensemble de données BigQuery</h2>
+<ul>
+<li>Menu : <strong>BigQuery → Sélectionner le projet cible → Créer un ensemble de données</strong></li>
+<li>Donne-lui un nom, ex : <code>billing_data</code></li>
+<li>Choisis la <strong>localisation</strong> (région) où les données seront stockées</li>
+<li>Laisse les autres options par défaut</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>5️⃣ Configurer l’exportation Cloud Billing</h2>
+<ul>
+<li>Menu : <strong>Facturation → Paramètres de facturation → Exporter vers BigQuery</strong></li>
+<li>Cliquer sur <strong>Créer un export</strong></li>
+<li>Sélectionner :</li>
+<ul>
+<li>Compte de facturation à exporter</li>
+<li>Projet et ensemble de données BigQuery créé (<code>billing_data</code>)</li>
+</ul>
+<li>Sélectionner le type de données :</li>
+<ul>
+<li>Données de coût détaillées (recommandé pour suivi précis)</li>
+<li>Données de tarification (optionnel, si besoin de référence sur tarifs)</li>
+</ul>
+<li>Cliquer sur <strong>Créer</strong></li>
+</ul>
+</div>
+
+<div class="section">
+<h2>6️⃣ Suivre les métriques et la consommation dans Google Cloud Console</h2>
+<ul>
+<li>Console GCP → <strong>Facturation → Vue d’ensemble</strong></li>
+<li>Filtrer par produit/service (ex : BigQuery)</li>
+<li>Visualiser :</li>
+<ul>
+<li>Nombre de requêtes exécutées</li>
+<li>Consommation (bytes traités pour BigQuery)</li>
+<li>Coût associé</li>
+</ul>
+<li>Créer des <strong>alertes budgétaires</strong> pour prévenir les dépassements :</li>
+<ul>
+<li>Facturation → Budgets et alertes → Créer un budget</li>
+</ul>
+</ul>
+</div>
+
+<div class="section">
+<h2>7️⃣ Analyser l’historique des requêtes BigQuery</h2>
+
+<h3>7.1 Job History via la Console</h3>
+<ul>
+<li>BigQuery → Projet → <strong>Historique des requêtes</strong></li>
+<li>Informations disponibles :</li>
+<ul>
+<li>Utilisateur ayant exécuté la requête</li>
+<li>Requête SQL complète</li>
+<li>Date, ressources utilisées (bytes, durée, coût estimé)</li>
+</ul>
+<li>Filtrage possible par <strong>date, utilisateur ou dataset</strong></li>
+</ul>
+
+<h3>7.2 Requête SQL sur INFORMATION_SCHEMA</h3>
+<pre><code class="sql">SELECT
+  creation_time,
+  user_email,
+  query,
+  total_bytes_processed,
+  total_slot_ms,
+  state
+FROM
+  `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE
+  job_type = 'QUERY'
+  AND creation_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+ORDER BY
+  creation_time DESC
+LIMIT 100;
+</code></pre>
+<ul>
+<li>Remplacer <code>region-us</code> par la région de votre projet</li>
+<li>Permet de lister toutes les requêtes exécutées récemment, avec utilisateur et consommation</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>8️⃣ Suivre la consommation par service via BigQuery</h2>
+<p>Une fois l’export Cloud Billing configuré, interroger les données pour suivre les coûts et la consommation :</p>
+<pre><code class="sql">SELECT
+  service.description AS service,
+  usage_start_time,
+  SUM(cost) AS total_cost,
+  SUM(usage.amount) AS total_usage
+FROM
+  `billing_data.gcp_billing_export_v1_*`
+WHERE
+  service.description = 'BigQuery'
+GROUP BY
+  service, usage_start_time
+ORDER BY
+  usage_start_time DESC;
+</code></pre>
+<ul>
+<li><code>billing_data</code> le nom de dataset BigQuery créer pour intégrer les données de facturation </li>
+<li>Permet de suivre le <strong>coût et la consommation quotidienne par service</strong></li>
+</ul>
+</div>
+
+<div class="section">
+<h2>9️⃣ Astuce avancée</h2>
+<ul>
+<li>Combiner :</li>
+<ul>
+<li>Export Cloud Billing → BigQuery</li>
+<li>Requêtes INFORMATION_SCHEMA pour l’historique des requêtes</li>
+<li>Dashboards dans <strong>Data Studio / Looker</strong> pour visualiser coûts et consommation dans l'étape 4 :Créer un ensemble de données BigQuery</li>
+<li>Alertes budgétaires pour prévenir les dépassements</li>
+</ul>
+</ul>
+</div>
+
+</body>
+</html>

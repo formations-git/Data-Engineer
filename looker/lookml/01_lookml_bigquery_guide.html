@@ -180,19 +180,16 @@ view: departments {
         </div>
     </div>
 
-    <div class="section">
-        <h2>4. Création du modèle (.model.lkml)</h2>
-        <ul>
-            <li>Créer un fichier <code>employees.model.lkml</code> ou équivalent.</li>
-            <li>Définir la connexion (nom exact), inclure les vues, configurer l’explore, jointures et labels explicites.</li>
+<div class="section">
+    <h2>4. Création du fichier LookML générique .explore.lkml</h2>
+    <ul>
+        <li>Utiliser l’option <strong>Create Generic LookML File</strong> pour créer un fichier générique, par exemple <code>generic_employees.explore.lkml</code>.</li>
+        <li>Inclure les vues nécessaires et configurer les explores, jointures et labels explicites.</li>
+    </ul>
 
-        </ul>
         <div class="hint">
-            <pre><code class="language-bash">connection: "bigquery_hr_conn"
-include: "/views/*.view.lkml"
-
-explore: employees {
-  label: "Employés enrichis"
+            <pre><code class="language-bash">
+view_name: employees ## Table principale
 
   join: jobs {
     type: left_outer
@@ -204,7 +201,7 @@ explore: employees {
     type: left_outer
     relationship: many_to_one
     sql_on: ${employees.department_id} = ${departments.department_id} ;;
-    fields: [departments.department_name] #afficher que department_name
+    fields: [departments.department_name] # exposer seulement department_name
   }
 
   join: locations {
@@ -224,43 +221,114 @@ explore: employees {
     relationship: many_to_one
     sql_on: ${countries.region_id} = ${regions.region_id} ;;
   }
+</code></pre>
+
+  </div>
+    <p>
+        Ajouter <code>label:</code> et <code>description:</code> sur les explores et jointures pour plus de clarté.
+   </p>
+</div>
+
+<h2>5. Création du modèle (.model.lkml)</h2>
+
+<div class="section">
+	<h2>5.1 Création du modèle (.model.lkml) à partir des views</h2>
+	<ul>
+		<li>Créer un fichier <code>employees.model.lkml</code> ou équivalent.</li>
+		<li>Définir la connexion (nom exact), inclure les vues, configurer l’explore, jointures et labels explicites.</li>
+	</ul>
+
+	<div class="hint">
+		<pre><code class="language-bash">connection: "bigquery_hr_conn"
+include: "/views/*.view.lkml"
+
+explore: employees {
+  label: "Employés enrichis"
+
+  join: jobs {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${employees.job_id} = ${jobs.job_id} ;;
+  }
+
+  join: departments {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${employees.department_id} = ${departments.department_id} ;;
+	fields: [departments.department_name] #afficher que department_name
+  }
+
+  join: locations {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${departments.location_id} = ${locations.location_id} ;;
+  }
+
+  join: countries {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${locations.country_id} = ${countries.country_id} ;;
+  }
+
+  join: regions {
+	type: left_outer
+	relationship: many_to_one
+	sql_on: ${countries.region_id} = ${regions.region_id} ;;
+  }
 
   always_filter: {
-    sql: ${employees.hire_date} &gt;= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR) ;;
+	sql: ${employees.hire_date} &gt;= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR) ;;
   }
-}</code></pre>
-        </div>
-        <p>
-            Ajouter <code>label:</code>, <code>description:</code> sur les explores et joints.<br>
-            Utiliser <code>always_filter</code> pour limiter l’horizon temporel (économie de coûts BigQuery).<br>
-			Utiliser <code>fields</code> pour exposer que les champs nécissaire de la vue, restreindre directement les champs exposés dans l’explore ou la jointure via le paramètre fields: [ ... ]<br>
-			Exemple : la table departments possède les champs department_id, department_name, manager_id, location_id et on veut afficher que department_name
-        </p>
-		<img src="./Utilisation_fields.JPG" >
-    </div>
-
-    <div class="section">
-        <h2>5. Tests et validation</h2>
-        <ul>
-            <li>Valider le LookML dans l'IDE pour repérer erreurs et warnings.</li>
-            <li>Tester les explores (« Explorer &gt; Employés enrichis ») pour vérifier jointures et qualité des données.</li>
-        </ul>
-        <div class="hint">
-            <pre><code class="language-bash">test: not_null_employee_id {
-  type: not_null
-  sql: ${employee_id} ;;
 }
+		</code></pre>
+	</div>
+	<p>
+		Ajouter <code>label:</code>, <code>description:</code> sur les explores et joints.<br>
+		Utiliser <code>always_filter</code> pour limiter l’horizon temporel (économie de coûts BigQuery).<br>
+		Utiliser <code>fields</code> pour exposer que les champs nécissaire de la vue, restreindre directement les champs exposés dans l’explore ou la jointure via le paramètre fields: [ ... ]<br>
+		Exemple : la table departments possède les champs department_id, department_name, manager_id, location_id et on veut afficher que department_name
+	</p>
+	<img src="./Utilisation_fields.JPG" >
+</div>
 
-test: unique_employee_id {
-  type: unique
-  sql: ${employee_id} ;;
-}</code></pre>
-        </div>
-        <p class="small">Astuce : lancer des requêtes d'exploration simples (par ex. count par département), vérifier le coût estimé via BigQuery.</p>
-    </div>
+<div class="section">
+	<h2>5.2 Création du modèle (.model.lkml) à partir des views</h2>
+	<ul>
+		<li>Créer un fichier <code>employees.model.lkml</code> ou équivalent.</li>
+		<li>Définir la connexion (nom exact), l'emplacements des vues et des explores</li>
+	</ul>
+
+	<div class="hint">
+		<pre><code class="language-bash">
+connection: "bigquery_hr_conn"
+include: "/expores/*.expore"  # expores dossier ou ce trouve les fichiers .explore
+include: "/views/*.view"	  # views dossier ou ce trouve les fichiers .view
+		</code></pre>
+	</div>
+</div>
+
+<div class="section">
+	<h2>6. Tests et validation</h2>
+	<ul>
+		<li>Valider le LookML dans l'IDE pour repérer erreurs et warnings.</li>
+		<li>Tester les explores (« Explorer &gt; Employés enrichis ») pour vérifier jointures et qualité des données.</li>
+	</ul>
+	<div class="hint">
+		<pre><code class="language-bash">test: not_null_employee_id {
+		type: not_null
+		sql: ${employee_id} ;;
+		}
+
+		test: unique_employee_id {
+		type: unique
+		sql: ${employee_id} ;;
+		}</code></pre>
+	</div>
+	<p class="small">Astuce : lancer des requêtes d'exploration simples (par ex. count par département), vérifier le coût estimé via BigQuery.</p>
+</div>
 
     <div class="section">
-        <h2>6. Documentation &amp; gouvernance</h2>
+        <h2>7. Documentation &amp; gouvernance</h2>
         <ul>
             <li>Ajoute une <code>description:</code> à chaque vue, dimension et mesure pour la documentation générée.</li>
             <li>Adopte des standards de nommage (snake_case) et des labels explicites pour les explores.</li>
@@ -275,7 +343,7 @@ test: unique_employee_id {
     </div>
 
     <div class="section">
-        <h2>7. Déploiement (Git + CI/CD)</h2>
+        <h2>8. Déploiement (Git + CI/CD)</h2>
         <ul>
             <li>Travailler sur des branches feature (<code>feature/...</code>), faire des pull requests, passer la revue de code et fusionner sur la branche production.</li>
             <li>Déployer via interface Looker (<em>Déployer en production</em>) ou pipeline CI/CD avec tests automatiques.</li>
@@ -286,7 +354,7 @@ test: unique_employee_id {
     </div>
 
     <div class="section">
-        <h2>8. Dashboards &amp; rapports</h2>
+        <h2>9. Dashboards &amp; rapports</h2>
         <ol>
             <li>Construire des requêtes dans <em>Explorer</em> puis sauvegarder en <em>Look</em>.</li>
             <li>Créer un <em>Dashboard</em>, ajouter tuiles (Looks ou nouvelles requêtes).</li>
@@ -300,7 +368,7 @@ test: unique_employee_id {
     </div>
 
     <div class="section">
-        <h2>9. Maintenance &amp; optimisation pour BigQuery</h2>
+        <h2>10. Maintenance &amp; optimisation pour BigQuery</h2>
         <ul>
             <li>Partitionner et clusteriser les tables dans BigQuery (par date/département) pour réduire les coûts.</li>
             <li>Privilégier les filtres sur les partitions dans Looker.</li>
